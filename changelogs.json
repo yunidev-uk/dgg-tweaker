@@ -16,5 +16,8 @@
     "1.14" : "NSFW, NSFL and SPOILER underlines now appear under links. Fixed bug where mentions sometimes don't load, and mentions are now sorted correctly by time.",
     "1.15" : "RustleSearch logs now load when accessed from the users menu in the bottom right.",
     "1.16" : "Added 'Load more messages' button to logs and improved logs reliability",
-    "1.17" : "Logs and mentions will now respect the 'Show time' setting for messages"
+    "1.17" : "Logs and mentions will now respect the 'Show time' setting for messages",
+    "1.18" : "Bug fix for inline logs and better cinema mode menubar + controls",
+    "1.19" : "Bug fix for inline logs not loading correctly and fixed settings UI",
+    "1.20" : "Removed RustleSearch logs since they are now available in the official DGG chat. Fixed mentions button (the API had changed)."
 }

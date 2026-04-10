@@ -1,9 +1,9 @@
-.profile-content .user-info__field {
+.shell-layout-content__inner .user-info__field {
     display: flex;
     align-items: center;
     justify-content: end;
 }
-.profile-content input[type="checkbox"] {
+.shell-layout-content__inner input[type="checkbox"] {
     appearance: none;
     background-color: #18191b;
     margin: 0;
@@ -19,17 +19,17 @@
     justify-content: center;
     transition: background-color 150ms ease 0s, border-color 150ms ease 0s;
 }
-.profile-content input[type="checkbox"]:hover {
+.shell-layout-content__inner input[type="checkbox"]:hover {
     border-color:  #0090ff;
 }
-.profile-content input[type="checkbox"]:checked {
+.shell-layout-content__inner input[type="checkbox"]:checked {
     background-color: #0090ff;
     border-color:  #0090ff;
 }
-.profile-content section > div.user-info__section {
+.shell-layout-content__inner section > div.user-info__section {
     border: none;
 }
-.profile-content section > .profile-heading {
+.shell-layout-content__inner section > .profile-heading {
     margin-bottom: 1.5rem;
 }
 
@@ -139,21 +139,65 @@ div.tippy-content:has(> .dgg-tweaks-mentions-popup) {
     overflow: hidden;
 }
 
-.dgg-tweaks-more-messages-btn {
-    color: rgb(245, 245, 245);
-    font-weight: bold;
-    border-bottom: 1px solid rgb(97, 97, 97);
-    width: 100%;
-    background-color: #121212;
-    margin-bottom: 4px;
-    padding-top: 4px;
-    padding-bottom: 2px;
-}
-.dgg-tweaks-more-messages-btn:hover {
-    background-color: #282828;
+#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {
+    display: none !important;
 }
 
-#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting,
-#dgg-tweaks-inline-rustlesearch.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-inline-force-timestamps.dgg-tweaks-setting {
-    display: none !important;
+
+#dgg-tweaks-menubar-hover {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    right: 0%;
+    height: 64px;
+}
+
+.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {
+    z-index: 25;
+    transition: transform 0.125s;
+    background-color: #111113;
+    transform: translateY(-100%);
+}
+.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {
+    transform: translateY(0%);
+}
+
+
+#dgg-tweaks-controls-hover {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    height: 64px;
+}
+
+.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {
+    display: flex;
+    position: absolute;
+    bottom: 0px;
+    padding: 2em;
+    padding-top: 0;
+    transform: translateY(calc(100%));
+    transition: transform 0.125s;
+}
+.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {
+    transform: translateY(0px);
+}
+
+@media (orientation: portrait), (max-width: 40rem) {
+    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {
+        transform: translateY(0px);
+        transition: none;
+    }
+    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {
+        background-color: #111113;
+        position: inherit;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 1rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 3;
+        width: 100%;
+    }
 }

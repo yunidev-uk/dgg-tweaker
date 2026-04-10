@@ -13,11 +13,10 @@ const settingsMenuDef = [
         heading: "Chat",
         subheading: "Settings that affect DGG Chat (including embeds)",
         fields: [
-            [INPUT_TYPES.CHECKBOX, 'inline-rustlesearch', "Inline RustleSearch", "Show rustlesearch logs directly in user right click info menu"],
-            [INPUT_TYPES.CHECKBOX, 'inline-force-timestamps', "Force RustleSearch Timestamps", "Always show timestamps for inline logs from rustlesearch"],
             [INPUT_TYPES.CHECKBOX, 'resize-user-info', "Resizable User Info", "Allow for resizing the user right click info menu"],
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
+            [INPUT_TYPES.CHECKBOX, 'double-tab-insert', "Double Tab Insert Last Mention", "Insert username of last person who mentioned you in chat when double pressing tab"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
             [INPUT_TYPES.SELECT, 'aggregate-links-button', "'Aggregate Links' Button", "Mode for a new 'Aggregate Links' button in chat", [['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']]],
@@ -49,12 +48,11 @@ let settings = {
     'link-size': 1.00,
     'link-size-debug': false,
     'aggregate-links-button': 'off',
-    'inline-rustlesearch': true,
-    'inline-force-timestamps': false,
     'resize-user-info': true,
     'dgg-layout-fix': false,
     'mentions-button': true,
-    'mentions-force-timestamps': false
+    'mentions-force-timestamps': false,
+    'double-tab-insert': true
 };
 
 function changeSetting(key, value) {
@@ -220,26 +218,27 @@ function profileSettingsMenu() {
         el('span', { classes: ['profile-heading__subtitle'] }, subheading),
     );
 
-    const menu = el('div', { classes: ['profile-content'] },
+    const menu = el('div', { classes: ['shell-layout-content__inner'] },
         settingsMenuDef.map(section => el('section', {},
             heading(section.heading, section.subheading),
             ...section.fields.map(field => renderField(PROFILE_UI, field))
         ))
     ).build();
 
-    document.querySelector('.profile-content').replaceWith(menu);
+    document.querySelector('.shell-layout-content__inner').replaceWith(menu);
 }
 
 function profileSettingsNavbar() {
     const active = window.location.search === '?dgg-tweaks';
 
-    if (active) document.querySelector('.tab.tab--active').classList.remove('tab--active');
+    if (active) document.querySelector('.side-nav__item.side-nav__item--active').classList.remove('side-nav__item--active');
 
-    const navItem = el('li', { classes: active ? ['tab', 'tab--active'] : ['tab'] },
-        el('a', { classes: ['tab__link'], href: '/profile/?dgg-tweaks' }, "DGG Tweaks")
+    const navItem = el('a', { classes: active ? ['side-nav__item', 'side-nav__item--active'] : ['side-nav__item'], href: '/profile/?dgg-tweaks' },
+        fromHTMLString(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`),
+        " DGG Tweaks"
     ).build();
 
-    document.querySelector('.tabs.tabs--vertical').appendChild(navItem);
+    document.querySelector('.side-nav__group').appendChild(navItem);
 }
 
 function globalNavbarSettingsButton() {
@@ -426,71 +425,7 @@ function buildTemplatedChatMessage(username, text, timestamp = Date.now()) {
     const elementString = `<div class="msg-chat msg-user" data-username="${username.toLowerCase()}"><time class="time" title="${fullDate}" data-unixtimestamp="${timestamp}">${time}</time>  <a title="" class="user">${username}</a><span class="ctrl">: </span> <span class="text">${text}</span></div>`;
     const templateContainer = document.createElement('template');
     templateContainer.innerHTML = elementString;
-    return templateContainer.content;
-}
-
-// INLINE RUSTLESEARCH
-
-let lastRequestTimestamp = null;
-let loadingLogs = false;
-
-async function loadRustleLogs() {
-    if (loadingLogs) return;
-    loadingLogs = true;
-
-    const infoBox = document.querySelector('#chat-user-info');
-    const username = infoBox.querySelector('.username').textContent;
-    const messageContainer = infoBox.querySelector('.content.os-viewport');
-
-    infoBox.querySelector('.stalk.hidden')?.classList.remove("hidden"); // Unhide message container
-
-    let url = `https://api-v2.rustlesearch.dev/anon/search?channel=Destinygg&username=${encodeURIComponent(username)}`;
-    if (lastRequestTimestamp !== null) url += `&search_after=${lastRequestTimestamp}`;
-    const res = await fetch(url);
-    const json = await res.json();
-    const messages = json.data.messages;
-    messages.sort((a, b) => a.searchAfter < b.searchAfter);
-    
-    const existingMessage = messageContainer.lastChild;
-    existingMessage?.remove();
-    
-    const messageEls = await Promise.all(messages.map(async message => {
-        const messageContent = await REGEXES.renderChatMessage(message.text);
-        return buildTemplatedChatMessage(username, messageContent, message.searchAfter);
-    }));
-
-    const relativeScroll = messageContainer.scrollHeight - messageContainer.scrollTop; 
-
-    messageEls.forEach(el => {
-        if (messageContainer.firstChild) messageContainer.firstChild.before(el);
-        else messageContainer.appendChild(el);
-    });
-
-    if (!lastRequestTimestamp) {
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-        if (existingMessage) {
-            const currentEl = messageEls.find(el => el.textContent === existingMessage.textContent);
-            if (currentEl) currentEl.scrollIntoView({ block: "nearest", inline: "nearest" });
-            else messageContainer.appendChild(existingMessage);
-        }
-    } else {
-        messageContainer.scrollTop = messageContainer.scrollHeight - relativeScroll;
-    }
-
-    let moreButton = messageContainer.querySelector(".dgg-tweaks-more-messages-btn");
-    if (!moreButton) moreButton = el("button", { classes: ["dgg-tweaks-more-messages-btn"], events: { click: loadRustleLogs } }, "Load more messages").build();
-    else moreButton.remove();
-    messageContainer.firstChild.before(moreButton);
-
-    lastRequestTimestamp = messages[messages.length - 1].searchAfter;
-    loadingLogs = false;
-}
-
-async function injectRustleLogs() {
-    lastRequestTimestamp = null;
-    loadingLogs = false; // In case something went wrong, force not loading
-    document.querySelector('#chat-user-info')?.querySelector(".dgg-tweaks-more-messages-btn")?.remove();
-    await loadRustleLogs();
+    return templateContainer.content.childNodes[0];
 }
 
 // RESIZE USER INFO
@@ -541,7 +476,6 @@ async function injectInfoResize() {
 // USER INFO BOX
 
 async function injectToUserInfo() {
-    if (settings['inline-rustlesearch']) await injectRustleLogs().catch();
     await injectInfoResize();
 }
 
@@ -556,7 +490,7 @@ const infoObserver = new MutationObserver((mutations) => {
 });
 
 function registerInfoObserver() {
-    if (settings['inline-rustlesearch']) {
+    if (settings['resize-user-info']) {
         const infoBox = document.getElementById('chat-user-info');
         if (infoBox) infoObserver.observe(infoBox, { attributes: true });
     } else {
@@ -619,7 +553,7 @@ async function openMentionsPopup() {
     let messages = [];
 
     const res = await fetch(`https://www.destiny.gg/api/chat/mentions?username=${encodeURIComponent(username)}&limit=10`);
-    const json = await res.json();
+    const json = (await res.json()).data;
     const msgArr = Array.isArray(json) ? json : Object.values(json).filter(item => typeof item !== "string" && item);
     msgArr.sort((a, b) => a.date - b.date);
 
@@ -660,6 +594,70 @@ function addMentionsButton() {
     }
 }
 
+// CINEMA MODE
+
+function cinemaModeOpenTop() {
+    const header = document.querySelector("header.header");
+    header.classList.add("active");
+
+    const intervalId = setInterval(close, 125); // Deal with exiting window
+    function close() {
+        if (header.matches(":hover")) return;
+        clearInterval(intervalId);
+        header.classList.remove("active");
+        header.removeEventListener('mouseleave', close);
+    }
+    header.addEventListener('mouseleave', close);
+}
+
+function toggleCinemaModeTop() {
+    const domElId = "dgg-tweaks-menubar-hover";
+    const showClass = "dgg-tweaks-show-in-cinema-mode";
+    const enabled = settings['bigscreen-menubar'];
+
+    const header = document.querySelector("header.header");
+    header.classList.remove(showClass);
+
+    document.getElementById(domElId)?.remove();
+    if (!enabled) return;
+
+    const element = el('div', { id: domElId, events: { 'mouseenter': cinemaModeOpenTop } }).build();
+    document.querySelector(".stream-panel__backdrop").appendChild(element);
+
+    header.classList.add(showClass);
+}
+
+function cinemaModeOpenBottom() {
+    const header = document.querySelector("#stream-controls");
+    header.classList.add("active");
+
+    const intervalId = setInterval(close, 125); // Deal with exiting window
+    function close() {
+        if (header.matches(":hover")) return;
+        clearInterval(intervalId);
+        header.classList.remove("active");
+        header.removeEventListener('mouseleave', close);
+    }
+    header.addEventListener('mouseleave', close);
+}
+
+function toggleCinemaModeBottom() {
+    const domElId = "dgg-tweaks-controls-hover";
+    const showClass = "dgg-tweaks-show-in-cinema-mode";
+    const enabled = settings['bigscreen-controls'];
+
+    const header = document.querySelector("#stream-controls");
+    header.classList.remove(showClass);
+
+    document.getElementById(domElId)?.remove();
+    if (!enabled) return;
+
+    const element = el('div', { id: domElId, events: { 'mouseenter': cinemaModeOpenBottom } }).build();
+    document.querySelector(".stream-panel__backdrop").appendChild(element);
+
+    header.classList.add(showClass);
+}
+
 // MAIN
 
 async function onLoad() {
@@ -667,14 +665,13 @@ async function onLoad() {
         chatSettingsMenu();
         UTIL.injectStylesheet('css/link-size.css');
         registerInfoObserver();
-        if (settings['inline-rustlesearch']) REGEXES.renderChatMessage("");
     } else {
         globalNavbarSettingsButton();
         changelogDialog();
     }
     if (PAGE_TYPE === PAGE_TYPES.BIGSCREEN) {
-        UTIL.injectStylesheet('css/bigscreen-menubar.css', settings['bigscreen-menubar']);
-        UTIL.injectStylesheet('css/bigscreen-controls.css', settings['bigscreen-controls']);
+        toggleCinemaModeTop();
+        toggleCinemaModeBottom();
         UTIL.injectStylesheet('css/dgg-layout-fix.css', settings['dgg-layout-fix']);
         if (settings['dgg-layout-fix']) applyDGGLayoutFix();
     }
@@ -690,9 +687,8 @@ async function onSettingsChanged() {
         document.body.style.setProperty('--link-size', isNaN(Number(settings['link-size'])) ? 0 : settings['link-size'] - 1);
         addLinkAggregationButton();
         addMentionsButton();
-        const userInfo = document.querySelector('#chat-user-info');
-        userInfo.classList.remove('pref-showtime');
-        if (settings['inline-rustlesearch'] && settings['inline-force-timestamps']) userInfo.classList.add('pref-showtime');
+        registerInfoObserver();
+        if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();
     }
 }
 
