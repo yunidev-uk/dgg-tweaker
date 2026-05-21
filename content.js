@@ -212,6 +212,149 @@ function addLinkAggregationButton() {
     }
 }
 
+let linkHitboxRefreshId = null;
+let linkSizeHandlersRegistered = false;
+
+function getLinkHitboxLayer() {
+    let layer = document.getElementById('dgg-tweaks-link-hitboxes');
+    if (layer) return layer;
+
+    layer = document.createElement('div');
+    layer.id = 'dgg-tweaks-link-hitboxes';
+    document.body.appendChild(layer);
+    return layer;
+}
+
+function getLinkHitboxOutset(link) {
+    const linkSize = Number(settings['link-size']);
+    const multiplier = Number.isFinite(linkSize) ? Math.max(1, linkSize) : 1;
+    if (multiplier <= 1) return 0;
+
+    const fontSize = parseFloat(getComputedStyle(link).fontSize) || 16;
+    return (multiplier - 1) * 0.5 * fontSize;
+}
+
+function pointDistanceFromRect(x, y, rect) {
+    const dx = x < rect.left ? rect.left - x : x > rect.right ? x - rect.right : 0;
+    const dy = y < rect.top ? rect.top - y : y > rect.bottom ? y - rect.bottom : 0;
+    return Math.hypot(dx, dy);
+}
+
+function findExpandedLinkAtPoint(x, y) {
+    let best = null;
+    let bestDistance = Infinity;
+
+    const links = document.querySelectorAll('.msg-chat .text a.externallink[href]');
+    for (const link of links) {
+        const outset = getLinkHitboxOutset(link);
+        if (outset <= 0) continue;
+
+        for (const rect of link.getClientRects()) {
+            if (!rect.width || !rect.height) continue;
+            if (
+                x < rect.left - outset ||
+                x > rect.right + outset ||
+                y < rect.top - outset ||
+                y > rect.bottom + outset
+            ) continue;
+
+            const distance = pointDistanceFromRect(x, y, rect);
+            if (distance < bestDistance) {
+                best = link;
+                bestDistance = distance;
+            }
+        }
+    }
+
+    return best;
+}
+
+function followExpandedLink(link, event) {
+    const openInNewTab = event.ctrlKey || event.metaKey || event.shiftKey || event.button === 1 || link.target === '_blank';
+    if (openInNewTab) {
+        window.open(link.href, '_blank', 'noopener');
+        return;
+    }
+
+    window.location.href = link.href;
+}
+
+function maybeFollowExpandedLink(event) {
+    if (event.defaultPrevented || event.button > 1) return;
+    if (event.target.closest('a, button, input, textarea, select, [role="button"]')) return;
+
+    const link = findExpandedLinkAtPoint(event.clientX, event.clientY);
+    if (!link) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    followExpandedLink(link, event);
+}
+
+function updateExpandedLinkCursor(event) {
+    if (event.target.closest('a, button, input, textarea, select, [role="button"]')) {
+        document.body.classList.remove('dgg-tweaks-expanded-link-hover');
+        return;
+    }
+
+    document.body.classList.toggle('dgg-tweaks-expanded-link-hover', Boolean(findExpandedLinkAtPoint(event.clientX, event.clientY)));
+}
+
+function refreshLinkHitboxes() {
+    const layer = getLinkHitboxLayer();
+    layer.replaceChildren();
+    if (!settings['link-size-debug']) return;
+
+    const links = document.querySelectorAll('.msg-chat .text a.externallink[href]');
+    for (const link of links) {
+        const outset = getLinkHitboxOutset(link);
+        if (outset <= 0) continue;
+
+        for (const rect of link.getClientRects()) {
+            if (!rect.width || !rect.height) continue;
+            if (rect.right <= 0 || rect.bottom <= 0 || rect.left >= window.innerWidth || rect.top >= window.innerHeight) continue;
+
+            const left = Math.max(0, rect.left - outset);
+            const top = Math.max(0, rect.top - outset);
+            const right = Math.min(window.innerWidth, rect.right + outset);
+            const bottom = Math.min(window.innerHeight, rect.bottom + outset);
+            if (right <= left || bottom <= top) continue;
+
+            const hitbox = document.createElement('a');
+            hitbox.className = 'dgg-tweaks-link-hitbox';
+            hitbox.href = link.href;
+            hitbox.target = link.target || '_blank';
+            hitbox.rel = link.rel || 'noopener noreferrer';
+            hitbox.tabIndex = -1;
+            hitbox.setAttribute('aria-hidden', 'true');
+            hitbox.style.left = `${left}px`;
+            hitbox.style.top = `${top}px`;
+            hitbox.style.width = `${right - left}px`;
+            hitbox.style.height = `${bottom - top}px`;
+            layer.appendChild(hitbox);
+        }
+    }
+}
+
+function scheduleLinkHitboxRefresh() {
+    cancelAnimationFrame(linkHitboxRefreshId);
+    linkHitboxRefreshId = requestAnimationFrame(refreshLinkHitboxes);
+}
+
+function registerLinkSizeHandling() {
+    if (linkSizeHandlersRegistered) return;
+    linkSizeHandlersRegistered = true;
+
+    document.addEventListener('click', maybeFollowExpandedLink, true);
+    document.addEventListener('auxclick', maybeFollowExpandedLink, true);
+    document.addEventListener('pointermove', event => {
+        updateExpandedLinkCursor(event);
+        scheduleLinkHitboxRefresh();
+    }, true);
+    window.addEventListener('resize', scheduleLinkHitboxRefresh);
+    document.addEventListener('scroll', scheduleLinkHitboxRefresh, true);
+}
+
 function showTimeEnabled() {
     return document.getElementById("chat").classList.contains("pref-showtime");
 }
@@ -533,6 +676,7 @@ async function onLoad() {
     if (PAGE_TYPE === PAGE_TYPES.CHAT) {
         chatSettingsMenu();
         UTIL.injectStylesheet('css/link-size.css');
+        registerLinkSizeHandling();
         registerInfoObserver();
     } else {
     }
@@ -547,7 +691,7 @@ async function onLoad() {
 async function onSettingsChanged() {
     if (PAGE_TYPE === PAGE_TYPES.CHAT) {
         UTIL.injectStylesheet('css/link-size-debug.css', settings['link-size-debug']);
-        document.body.style.setProperty('--link-size', isNaN(Number(settings['link-size'])) ? 0 : settings['link-size'] - 1);
+        scheduleLinkHitboxRefresh();
         addLinkAggregationButton();
         addMentionsButton();
         addRustlesearchButton();

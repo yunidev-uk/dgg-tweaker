@@ -12,7 +12,7 @@
 
 (function () {
 globalThis.DGG_TWEAKS_VERSION = "1.20";
-globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n}\n\n.shell-layout-content__inner .user-info__field {\n    display: flex;\n    align-items: center;\n    justify-content: end;\n}\n.shell-layout-content__inner input[type=\"checkbox\"] {\n    appearance: none;\n    background-color: #18191b;\n    margin: 0;\n    overflow: hidden;\n    font: inherit;\n    color: #edeef0;\n    width: 2rem;\n    height: 2rem;\n    border: 1px solid #43484e;\n    border-radius: 0.625rem;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    transition: background-color 150ms ease 0s, border-color 150ms ease 0s;\n}\n.shell-layout-content__inner input[type=\"checkbox\"]:hover {\n    border-color:  #0090ff;\n}\n.shell-layout-content__inner input[type=\"checkbox\"]:checked {\n    background-color: #0090ff;\n    border-color:  #0090ff;\n}\n.shell-layout-content__inner section > div.user-info__section {\n    border: none;\n}\n.shell-layout-content__inner section > .profile-heading {\n    margin-bottom: 1.5rem;\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n.dgg-tweaks-update-dialog {\n    position: absolute;\n    top: 50%;\n    bottom: 50%;\n    left: 50%;\n    right: 50%;\n    width: max-content;\n    transform: translate(-50%);\n    color: white;\n    font: 600 2.25rem/2.25rem Poppins,system-ui,sans-serif;\n}\n.dgg-tweaks-update-dialog:focus-visible {\n    outline: none;\n}\n.dgg-tweaks-update-dialog *:focus-visible {\n    outline: none;\n}\n.dgg-tweaks-update-dialog::backdrop {\n    background-color: rgba(0, 0, 0, 0.8);\n}\n.dgg-tweaks-update-dialog ul {\n    list-style: inside;\n}\n.dgg-tweaks-update-dialog .card__description {\n    max-width: 32em;\n    max-height: 32em;\n    overflow-y: auto;\n}\n.dgg-tweaks-update-dialog .card__description p {\n    margin-top: 0.5em;\n    margin-bottom: 1.5em;\n}\n.dgg-tweaks-update-dialog .card__description p:last-child {\n    margin-bottom: 0em;\n}\n.dgg-tweaks-update-dialog .card__description p:first-child {\n    margin-top: 0em;\n}\n.dgg-tweaks-update-dialog .card__field-container {\n    flex-grow: 1;\n    display: flex;\n    gap: 0.5rem;\n    align-items: center;\n}\n.dgg-tweaks-update-dialog .card__field-label {\n    font: 400 .88rem/1.25rem Inter,system-ui,sans-serif;\n}\n.dgg-tweaks-update-dialog .card__field {\n    display: flex;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"] {\n    appearance: none;\n    background-color: #18191b;\n    margin: 0;\n    overflow: hidden;\n    font: inherit;\n    color: #edeef0;\n    width: 1rem;\n    height: 1rem;\n    border: 1px solid #43484e;\n    border-radius: 0.3125rem;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    transition: background-color 150ms ease 0s, border-color 150ms ease 0s;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"]:hover {\n    border-color:  #0090ff;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"]:checked {\n    background-color: #0090ff;\n    border-color:  #0090ff;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n    display: inline;\n    border-width: 0px;\n    z-index: 1;\n    padding: calc(var(--link-size) * 0.5em) calc(var(--link-size) * 0.5em);\n    margin: calc(var(--link-size) * -0.5em);\n    -webkit-box-decoration-break: clone;\n    box-decoration-break: clone;\n}\n\n.msg-chat a.nsfw-link::after {\n    content: \"\";\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    border-style: dashed;\n    border-width: 1px 0 1px 0;\n    border-color: rgba(0,0,0,0) rgba(0,0,0,0) red rgba(0,0,0,0);\n    left: 0px;\n    right: 0px;\n}\n\n.msg-chat a.nsfl-link::after {\n    content: \"\";\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    border-style: dashed;\n    border-width: 1px 0 1px 0;\n    border-color: rgba(0,0,0,0) rgba(0,0,0,0) #fff000 rgba(0,0,0,0);\n    left: 0px;\n    right: 0px;\n}\n\n.msg-chat a.spoilers-link::after {\n    content: \"\";\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    border-style: dashed;\n    border-width: 1px 0 1px 0;\n    border-color: rgba(0,0,0,0) rgba(0,0,0,0) #ff80ce rgba(0,0,0,0);\n    left: 0px;\n    right: 0px;\n}\n\n.msg-chat .user {\n    position: relative;\n    z-index: 2;\n}\n\n.msg-chat a.embed-button {\n    z-index: 2;\n}\n","css/link-size-debug.css":".msg-chat .text a.externallink {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
+globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n}\n\n.shell-layout-content__inner .user-info__field {\n    display: flex;\n    align-items: center;\n    justify-content: end;\n}\n.shell-layout-content__inner input[type=\"checkbox\"] {\n    appearance: none;\n    background-color: #18191b;\n    margin: 0;\n    overflow: hidden;\n    font: inherit;\n    color: #edeef0;\n    width: 2rem;\n    height: 2rem;\n    border: 1px solid #43484e;\n    border-radius: 0.625rem;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    transition: background-color 150ms ease 0s, border-color 150ms ease 0s;\n}\n.shell-layout-content__inner input[type=\"checkbox\"]:hover {\n    border-color:  #0090ff;\n}\n.shell-layout-content__inner input[type=\"checkbox\"]:checked {\n    background-color: #0090ff;\n    border-color:  #0090ff;\n}\n.shell-layout-content__inner section > div.user-info__section {\n    border: none;\n}\n.shell-layout-content__inner section > .profile-heading {\n    margin-bottom: 1.5rem;\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n.dgg-tweaks-update-dialog {\n    position: absolute;\n    top: 50%;\n    bottom: 50%;\n    left: 50%;\n    right: 50%;\n    width: max-content;\n    transform: translate(-50%);\n    color: white;\n    font: 600 2.25rem/2.25rem Poppins,system-ui,sans-serif;\n}\n.dgg-tweaks-update-dialog:focus-visible {\n    outline: none;\n}\n.dgg-tweaks-update-dialog *:focus-visible {\n    outline: none;\n}\n.dgg-tweaks-update-dialog::backdrop {\n    background-color: rgba(0, 0, 0, 0.8);\n}\n.dgg-tweaks-update-dialog ul {\n    list-style: inside;\n}\n.dgg-tweaks-update-dialog .card__description {\n    max-width: 32em;\n    max-height: 32em;\n    overflow-y: auto;\n}\n.dgg-tweaks-update-dialog .card__description p {\n    margin-top: 0.5em;\n    margin-bottom: 1.5em;\n}\n.dgg-tweaks-update-dialog .card__description p:last-child {\n    margin-bottom: 0em;\n}\n.dgg-tweaks-update-dialog .card__description p:first-child {\n    margin-top: 0em;\n}\n.dgg-tweaks-update-dialog .card__field-container {\n    flex-grow: 1;\n    display: flex;\n    gap: 0.5rem;\n    align-items: center;\n}\n.dgg-tweaks-update-dialog .card__field-label {\n    font: 400 .88rem/1.25rem Inter,system-ui,sans-serif;\n}\n.dgg-tweaks-update-dialog .card__field {\n    display: flex;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"] {\n    appearance: none;\n    background-color: #18191b;\n    margin: 0;\n    overflow: hidden;\n    font: inherit;\n    color: #edeef0;\n    width: 1rem;\n    height: 1rem;\n    border: 1px solid #43484e;\n    border-radius: 0.3125rem;\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    transition: background-color 150ms ease 0s, border-color 150ms ease 0s;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"]:hover {\n    border-color:  #0090ff;\n}\n.dgg-tweaks-update-dialog input[type=\"checkbox\"]:checked {\n    background-color: #0090ff;\n    border-color:  #0090ff;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
 
 (function (module, exports, define, require) {
 /**
@@ -403,20 +403,18 @@ const INPUT_TYPES = {
 const settingsMenuDef = [
     {
         heading: "Chat",
-        subheading: "Settings that affect DGG Chat (including embeds)",
         fields: [
             [INPUT_TYPES.CHECKBOX, 'resize-user-info', "Resizable User Info", "Allow for resizing the user right click info menu"],
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
-            [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to search your logs"],
+            [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
             [INPUT_TYPES.SELECT, 'aggregate-links-button', "'Aggregate Links' Button", "Mode for a new 'Aggregate Links' button in chat", [['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']]],
         ]
     },
     {
-        heading: "Big Screen",
-        subheading: "Settings that affect the Big Screen",
+        heading: "Big Screen (requires refresh)",
         fields: [
             [INPUT_TYPES.CHECKBOX, 'bigscreen-menubar', "Cinema Mode Menu Bar", "Slide out the menu bar on hover while in Cinema Mode"],
             [INPUT_TYPES.CHECKBOX, 'bigscreen-controls', "Cinema Mode Controls", "Slide out the bottom stream controls on hover while in Cinema Mode"],
@@ -589,6 +587,149 @@ function addLinkAggregationButton() {
             });
         }
     }
+}
+
+let linkHitboxRefreshId = null;
+let linkSizeHandlersRegistered = false;
+
+function getLinkHitboxLayer() {
+    let layer = document.getElementById('dgg-tweaks-link-hitboxes');
+    if (layer) return layer;
+
+    layer = document.createElement('div');
+    layer.id = 'dgg-tweaks-link-hitboxes';
+    document.body.appendChild(layer);
+    return layer;
+}
+
+function getLinkHitboxOutset(link) {
+    const linkSize = Number(settings['link-size']);
+    const multiplier = Number.isFinite(linkSize) ? Math.max(1, linkSize) : 1;
+    if (multiplier <= 1) return 0;
+
+    const fontSize = parseFloat(getComputedStyle(link).fontSize) || 16;
+    return (multiplier - 1) * 0.5 * fontSize;
+}
+
+function pointDistanceFromRect(x, y, rect) {
+    const dx = x < rect.left ? rect.left - x : x > rect.right ? x - rect.right : 0;
+    const dy = y < rect.top ? rect.top - y : y > rect.bottom ? y - rect.bottom : 0;
+    return Math.hypot(dx, dy);
+}
+
+function findExpandedLinkAtPoint(x, y) {
+    let best = null;
+    let bestDistance = Infinity;
+
+    const links = document.querySelectorAll('.msg-chat .text a.externallink[href]');
+    for (const link of links) {
+        const outset = getLinkHitboxOutset(link);
+        if (outset <= 0) continue;
+
+        for (const rect of link.getClientRects()) {
+            if (!rect.width || !rect.height) continue;
+            if (
+                x < rect.left - outset ||
+                x > rect.right + outset ||
+                y < rect.top - outset ||
+                y > rect.bottom + outset
+            ) continue;
+
+            const distance = pointDistanceFromRect(x, y, rect);
+            if (distance < bestDistance) {
+                best = link;
+                bestDistance = distance;
+            }
+        }
+    }
+
+    return best;
+}
+
+function followExpandedLink(link, event) {
+    const openInNewTab = event.ctrlKey || event.metaKey || event.shiftKey || event.button === 1 || link.target === '_blank';
+    if (openInNewTab) {
+        window.open(link.href, '_blank', 'noopener');
+        return;
+    }
+
+    window.location.href = link.href;
+}
+
+function maybeFollowExpandedLink(event) {
+    if (event.defaultPrevented || event.button > 1) return;
+    if (event.target.closest('a, button, input, textarea, select, [role="button"]')) return;
+
+    const link = findExpandedLinkAtPoint(event.clientX, event.clientY);
+    if (!link) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    followExpandedLink(link, event);
+}
+
+function updateExpandedLinkCursor(event) {
+    if (event.target.closest('a, button, input, textarea, select, [role="button"]')) {
+        document.body.classList.remove('dgg-tweaks-expanded-link-hover');
+        return;
+    }
+
+    document.body.classList.toggle('dgg-tweaks-expanded-link-hover', Boolean(findExpandedLinkAtPoint(event.clientX, event.clientY)));
+}
+
+function refreshLinkHitboxes() {
+    const layer = getLinkHitboxLayer();
+    layer.replaceChildren();
+    if (!settings['link-size-debug']) return;
+
+    const links = document.querySelectorAll('.msg-chat .text a.externallink[href]');
+    for (const link of links) {
+        const outset = getLinkHitboxOutset(link);
+        if (outset <= 0) continue;
+
+        for (const rect of link.getClientRects()) {
+            if (!rect.width || !rect.height) continue;
+            if (rect.right <= 0 || rect.bottom <= 0 || rect.left >= window.innerWidth || rect.top >= window.innerHeight) continue;
+
+            const left = Math.max(0, rect.left - outset);
+            const top = Math.max(0, rect.top - outset);
+            const right = Math.min(window.innerWidth, rect.right + outset);
+            const bottom = Math.min(window.innerHeight, rect.bottom + outset);
+            if (right <= left || bottom <= top) continue;
+
+            const hitbox = document.createElement('a');
+            hitbox.className = 'dgg-tweaks-link-hitbox';
+            hitbox.href = link.href;
+            hitbox.target = link.target || '_blank';
+            hitbox.rel = link.rel || 'noopener noreferrer';
+            hitbox.tabIndex = -1;
+            hitbox.setAttribute('aria-hidden', 'true');
+            hitbox.style.left = `${left}px`;
+            hitbox.style.top = `${top}px`;
+            hitbox.style.width = `${right - left}px`;
+            hitbox.style.height = `${bottom - top}px`;
+            layer.appendChild(hitbox);
+        }
+    }
+}
+
+function scheduleLinkHitboxRefresh() {
+    cancelAnimationFrame(linkHitboxRefreshId);
+    linkHitboxRefreshId = requestAnimationFrame(refreshLinkHitboxes);
+}
+
+function registerLinkSizeHandling() {
+    if (linkSizeHandlersRegistered) return;
+    linkSizeHandlersRegistered = true;
+
+    document.addEventListener('click', maybeFollowExpandedLink, true);
+    document.addEventListener('auxclick', maybeFollowExpandedLink, true);
+    document.addEventListener('pointermove', event => {
+        updateExpandedLinkCursor(event);
+        scheduleLinkHitboxRefresh();
+    }, true);
+    window.addEventListener('resize', scheduleLinkHitboxRefresh);
+    document.addEventListener('scroll', scheduleLinkHitboxRefresh, true);
 }
 
 function showTimeEnabled() {
@@ -815,7 +956,6 @@ function addRustlesearchButton() {
 
         rustlesearchButton = anchorButton.cloneNode(true);
         rustlesearchButton.id = 'dgg-tweaks-rustlesearch-btn';
-        rustlesearchButton.title = 'Search your Rustlesearch logs';
         rustlesearchButton.setAttribute('aria-label', 'Search your Rustlesearch logs');
         anchorButton.after(rustlesearchButton);
         rustlesearchButton.addEventListener('click', openRustlesearch);
@@ -913,6 +1053,7 @@ async function onLoad() {
     if (PAGE_TYPE === PAGE_TYPES.CHAT) {
         chatSettingsMenu();
         UTIL.injectStylesheet('css/link-size.css');
+        registerLinkSizeHandling();
         registerInfoObserver();
     } else {
     }
@@ -927,7 +1068,7 @@ async function onLoad() {
 async function onSettingsChanged() {
     if (PAGE_TYPE === PAGE_TYPES.CHAT) {
         UTIL.injectStylesheet('css/link-size-debug.css', settings['link-size-debug']);
-        document.body.style.setProperty('--link-size', isNaN(Number(settings['link-size'])) ? 0 : settings['link-size'] - 1);
+        scheduleLinkHitboxRefresh();
         addLinkAggregationButton();
         addMentionsButton();
         addRustlesearchButton();
