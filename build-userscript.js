@@ -50,7 +50,7 @@ const cssBundle = Object.fromEntries(cssFiles.map(file => [file, prepareCss(file
 
 const metadata = `// ==UserScript==
 // @name         DGG Tweaks
-// @namespace    https://github.com/dgg-tweaker
+// @namespace    yuniDev.dgg-tweaks
 // @version      ${version}
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev

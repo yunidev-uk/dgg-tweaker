@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         DGG Tweaks
-// @namespace    https://github.com/dgg-tweaker
+// @namespace    yuniDev.dgg-tweaks
 // @version      2.0.0
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
