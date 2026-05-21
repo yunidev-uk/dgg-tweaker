@@ -55,6 +55,8 @@ const metadata = `// ==UserScript==
 // @description  UI Tweaks for destiny.gg
 // @author       DGG Tweaks contributors
 // @match        https://www.destiny.gg/*
+// @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
+// @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @run-at       document-idle
@@ -68,15 +70,7 @@ globalThis.DGG_TWEAKS_CSS = ${JSON.stringify(cssBundle)};
 
 `;
 
-function wrapBrowserGlobal(relativePath) {
-    return `(function (module, exports, define, require) {
-${read(relativePath)}
-}).call(globalThis, undefined, undefined, undefined, undefined);`;
-}
-
 const sources = [
-    wrapBrowserGlobal('lib/popper.min.js'),
-    wrapBrowserGlobal('lib/tippy.min.js'),
     read('lib/util.js'),
     read('lib/regex.js'),
     read('content.js')

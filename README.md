@@ -16,6 +16,8 @@ npm run build
 
 Install `dist/dgg-tweaks.user.js` in your userscript manager.
 
+The userscript loads Popper and Tippy through pinned, unminified `@require` dependencies instead of bundling their code.
+
 All features can be toggled from the DGG chat settings menu.
 
 If you have any feature suggestions, feel free to add a GitHub issue.
