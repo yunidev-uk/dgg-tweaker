@@ -1,8 +1,12 @@
 .msg-chat .text a.externallink {
     position: relative;
-    display: inline-block;
+    display: inline;
     border-width: 0px;
     z-index: 1;
+    padding: calc(var(--link-size) * 0.5em) calc(var(--link-size) * 0.5em);
+    margin: calc(var(--link-size) * -0.5em);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
 
 .msg-chat a.nsfw-link::after {
@@ -42,14 +46,6 @@
     border-color: rgba(0,0,0,0) rgba(0,0,0,0) #ff80ce rgba(0,0,0,0);
     left: 0px;
     right: 0px;
-}
-
-.msg-chat .text a.externallink::before {
-    content: "";
-    position: absolute;
-    width: calc(100% + var(--link-size) * 1em);
-    height: calc(100% + var(--link-size) * 1em);
-    margin: calc(var(--link-size) * -0.5em + 2px);
 }
 
 .msg-chat .user {

@@ -1,4 +1,4 @@
-UI Tweaks for Destiny.gg
+# DGG Tweaks
 
 - Hover over the top of the screen while in Cinema Mode to show the menu bar
 - Hover over the bottom of the screen while in Cinema Mode to show stream controls
@@ -6,9 +6,16 @@ UI Tweaks for Destiny.gg
 - Button to view mentions
 - Collect recent links from chat in one place
 
-All features can be toggled and adjusted in the DGG settings menu (same one as for profile settings).
-Chat-related settings can be edited live from the settings icon in chat.
+## Userscript
 
-Chrome Webstore Link: https://chromewebstore.google.com/detail/dgg-tweaks/mojbdmnhbfbodmoidmcmahbcofceampd?authuser=0&hl=en-GB
+This project builds a userscript for Violentmonkey or Tampermonkey.
 
-If you have any feature suggestions, feel free to add a github issue or write a review on the chrome store.
+```sh
+npm run build
+```
+
+Install `dist/dgg-tweaks.user.js` in your userscript manager.
+
+All features can be toggled from the DGG chat settings menu.
+
+If you have any feature suggestions, feel free to add a GitHub issue.

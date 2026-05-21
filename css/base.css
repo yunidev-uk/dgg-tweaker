@@ -39,6 +39,38 @@ input.form-control {
     padding: .3em;
 }
 
+#dgg-tweaks-settings {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#dgg-tweaks-settings .dgg-tweaks-settings-title {
+    margin: 0 0 0.45rem;
+    padding: 0 0 0 0.6em;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+#dgg-tweaks-settings .dgg-tweaks-settings-section {
+    margin-top: 1rem;
+}
+
+#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {
+    margin-top: 0;
+}
+
+#dgg-tweaks-settings .dgg-tweaks-settings-heading {
+    font-size: .9em;
+    margin-top: 1.8em;
+    margin-bottom: .9em;
+    padding-left: .9em;
+    color: #494949;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
 .dgg-tweaks-update-dialog {
     position: absolute;
     top: 50%;
@@ -114,7 +146,7 @@ input.form-control {
 }
 
 #chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {
-    background: rgba(0,0,0,0) url('chrome-extension://__MSG_@@extension_id__/icons/links-icon.svg') no-repeat center center;
+    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;
     background-size: contain;
 }
 
@@ -124,7 +156,12 @@ input.form-control {
 }
 
 #chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {
-    background: rgba(0,0,0,0) url('chrome-extension://__MSG_@@extension_id__/icons/mentions-icon.svg') no-repeat center center;
+    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;
+    background-size: contain;
+}
+
+#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {
+    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;
     background-size: contain;
 }
 

@@ -1,6 +1,21 @@
 // SETTINGS
 
-const VERSION = chrome.runtime.getManifest().version;
+const VERSION = globalThis.DGG_TWEAKS_VERSION ?? "1.20";
+
+const STORAGE = {
+    async get(key) {
+        if (typeof GM_getValue === 'function') return GM_getValue(key);
+        const raw = localStorage.getItem(`dgg-tweaks:${key}`);
+        return raw === null ? undefined : JSON.parse(raw);
+    },
+    async set(key, value) {
+        if (typeof GM_setValue === 'function') {
+            GM_setValue(key, value);
+            return;
+        }
+        localStorage.setItem(`dgg-tweaks:${key}`, JSON.stringify(value));
+    }
+};
 
 const INPUT_TYPES = {
     CHECKBOX: Symbol('checkbox'),
@@ -11,38 +26,27 @@ const INPUT_TYPES = {
 const settingsMenuDef = [
     {
         heading: "Chat",
-        subheading: "Settings that affect DGG Chat (including embeds)",
         fields: [
             [INPUT_TYPES.CHECKBOX, 'resize-user-info', "Resizable User Info", "Allow for resizing the user right click info menu"],
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
-            [INPUT_TYPES.CHECKBOX, 'double-tab-insert', "Double Tab Insert Last Mention", "Insert username of last person who mentioned you in chat when double pressing tab"],
+            [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
             [INPUT_TYPES.SELECT, 'aggregate-links-button', "'Aggregate Links' Button", "Mode for a new 'Aggregate Links' button in chat", [['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']]],
         ]
     },
     {
-        heading: "Big Screen",
-        subheading: "Settings that affect the Big Screen",
+        heading: "Big Screen (requires refresh)",
         fields: [
             [INPUT_TYPES.CHECKBOX, 'bigscreen-menubar', "Cinema Mode Menu Bar", "Slide out the menu bar on hover while in Cinema Mode"],
             [INPUT_TYPES.CHECKBOX, 'bigscreen-controls', "Cinema Mode Controls", "Slide out the bottom stream controls on hover while in Cinema Mode"],
             [INPUT_TYPES.CHECKBOX, 'dgg-layout-fix', "DGG Layout Fix Script", "DGG Layout Fix script from chatter_here. Overrides the options above"],
         ]
     },
-    {
-        heading: "Other",
-        subheading: "Miscellaneous settings",
-        fields: [
-            [INPUT_TYPES.CHECKBOX, 'show-changelogs', "Show changelogs", "Display changelogs whenever this extension is updated"],
-            [INPUT_TYPES.BUTTON, 'show-changelogs-button', "Version History", "Click to open full historical changelogs", "Open", () => showChangelogDialog("0.0", VERSION)],
-        ]
-    }
 ];
 
 let settings = {
-    'show-changelogs': true,
     'bigscreen-menubar': true,
     'bigscreen-controls': false,
     'link-size': 1.00,
@@ -52,17 +56,17 @@ let settings = {
     'dgg-layout-fix': false,
     'mentions-button': true,
     'mentions-force-timestamps': false,
-    'double-tab-insert': true
+    'rustlesearch-button': true
 };
 
 function changeSetting(key, value) {
     settings[key] = value;
-    chrome.storage.sync.set({ settings });
+    STORAGE.set('settings', settings);
     onSettingsChanged();
 }
 
 async function loadSettings() {
-    const loaded = (await chrome.storage.sync.get('settings')).settings;
+    const loaded = await STORAGE.get('settings');
     settings = Object.assign(settings, loaded);
 }
 
@@ -123,77 +127,17 @@ const CHAT_UI = {
                 change: e => changeSetting(key, e.target.value)
             }
         }, ...options.map(option => el('option', { value: option[0], selected: option[0] === settings[key] ? true : undefined }, option[1])))
+    ),
+    [INPUT_TYPES.BUTTON]: (key, label, description, buttonText, click) => el('div', { classes: ['form-group', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
+        el('label', { title: description, for: 'dgg-tweaks-' + key }, label),
+        el('input', {
+            classes: ['form-control'],
+            type: 'button',
+            name: 'dgg-tweaks-' + key,
+            events: { click },
+            value: buttonText
+        })
     )
-}
-
-const PROFILE_UI = {
-    [INPUT_TYPES.CHECKBOX]: (key, label, description) => el('div', { classes: ['user-info__section', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
-        el('label', { classes: ['user-info__label'], for: 'dgg-tweaks-' + key }, label),
-        el('div', { classes: ['user-info__hint'] }, description),
-        el('div', { classes: ['user-info__field'] },
-            el('input', {
-                type: 'checkbox',
-                name: 'dgg-tweaks-' + key,
-                checked: settings[key],
-                events: { change: e => changeSetting(key, e.target.checked) }
-            })
-        )
-    ),
-    [INPUT_TYPES.NUMBER_FIELD]: (key, label, description, placeholder, min = undefined, max = undefined) => el('div', { classes: ['user-info__section', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
-        el('label', { classes: ['user-info__label'], for: 'dgg-tweaks-' + key }, label),
-        el('div', { classes: ['user-info__hint'] }, description),
-        el('div', { classes: ['user-info__field'] },
-            el('div', { classes: ['input'] },
-                el('div', { classes: ['input__area'] },
-                    el('div', { classes: ['input__container'] },
-                        el('input', {
-                            type: 'number',
-                            name: 'dgg-tweaks-' + key,
-                            value: settings[key],
-                            min,
-                            max,
-                            placeholder,
-                            events: {
-                                change: e => changeSetting(key, parseFloat(e.target.value))
-                            }
-                        })
-                    )
-                )
-            )
-        )
-    ),
-    [INPUT_TYPES.BUTTON]: (key, label, description, buttonText, click) => el('div', { classes: ['user-info__section', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
-        el('label', { classes: ['user-info__label'], for: 'dgg-tweaks-' + key }, label),
-        el('div', { classes: ['user-info__hint'] }, description),
-        el('div', { classes: ['user-info__field'] },
-            el('input', {
-                type: 'button',
-                name: 'dgg-tweaks-' + key,
-                classes: ['button', 'button--secondary'],
-                events: { click },
-                value: buttonText
-            })
-        )
-    ),
-    [INPUT_TYPES.SELECT]: (key, label, description, options) => el('div', { classes: ['user-info__section', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
-        el('label', { classes: ['user-info__label'], for: 'dgg-tweaks-' + key }, label),
-        el('div', { classes: ['user-info__hint'] }, description),
-        el('div', { classes: ['user-info__field'] },
-            el('div', { classes: ['input'] },
-                el('div', { classes: ['input__area'] },
-                    el('div', { classes: ['input__container'] },
-                        el('select', {
-                            classes: ['form-control'],
-                            name: 'dgg-tweaks-' + key,
-                            events: {
-                                change: e => changeSetting(key, e.target.value)
-                            }
-                        }, ...options.map(option => el('option', { value: option[0], selected: option[0] === settings[key] ? true : undefined }, option[1])))
-                    )
-                )
-            )
-        )
-    ),
 }
 
 function renderField(context, field) {
@@ -202,123 +146,15 @@ function renderField(context, field) {
 }
 
 function chatSettingsMenu() {
-    const chatDef = settingsMenuDef.find(section => section.heading === 'Chat');
-
     const menu = el('div', { id: 'dgg-tweaks-settings' },
-        el('h4', {}, "DGG Tweaks"),
-        ...chatDef.fields.map(field => renderField(CHAT_UI, field))
-    ).build();
-
-    document.getElementById('chat-settings-form').appendChild(menu);
-}
-
-function profileSettingsMenu() {
-    const heading = (heading, subheading) => el('div', { classes: ['profile-heading'] },
-        el('h2', { classes: ['profile-heading__title'] }, heading),
-        el('span', { classes: ['profile-heading__subtitle'] }, subheading),
-    );
-
-    const menu = el('div', { classes: ['shell-layout-content__inner'] },
-        settingsMenuDef.map(section => el('section', {},
-            heading(section.heading, section.subheading),
-            ...section.fields.map(field => renderField(PROFILE_UI, field))
+        el('h3', { classes: ['dgg-tweaks-settings-title'] }, "DGG Tweaks"),
+        ...settingsMenuDef.map(section => el('section', { classes: ['dgg-tweaks-settings-section'] },
+            el('h4', { classes: ['dgg-tweaks-settings-heading'] }, section.heading),
+            ...section.fields.map(field => renderField(CHAT_UI, field))
         ))
     ).build();
 
-    document.querySelector('.shell-layout-content__inner').replaceWith(menu);
-}
-
-function profileSettingsNavbar() {
-    const active = window.location.search === '?dgg-tweaks';
-
-    if (active) document.querySelector('.side-nav__item.side-nav__item--active').classList.remove('side-nav__item--active');
-
-    const navItem = el('a', { classes: active ? ['side-nav__item', 'side-nav__item--active'] : ['side-nav__item'], href: '/profile/?dgg-tweaks' },
-        fromHTMLString(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`),
-        " DGG Tweaks"
-    ).build();
-
-    document.querySelector('.side-nav__group').appendChild(navItem);
-}
-
-function globalNavbarSettingsButton() {
-    const item = el('li', { classList: ['dropdown__item'] },
-        el('a', { classList: ['dropdown__link'], href: '/profile/?dgg-tweaks' },
-            fromHTMLString(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`),
-            " DGG Tweaks"
-        )
-    ).build();
-    document
-        .querySelector('.navbar__actions')
-        .querySelector('ul.dropdown')
-        .querySelector('hr')
-        .before(item);
-}
-
-// CHANGELOGS
-
-async function loadChangelogFile() {
-    return fetch(chrome.runtime.getURL('changelogs.json')).then(res => res.json());
-}
-
-function compareVersions(a, b) {
-    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-}
-
-async function showChangelogDialog(fromVersion, toVersion, autoPopup = false) {
-    if (fromVersion !== toVersion) {
-        const changelogs = await loadChangelogFile();
-        const description = Object.entries(changelogs)
-            .filter(entry => compareVersions(String(entry[0]), fromVersion) > 0)
-            .filter(entry => compareVersions(String(entry[0]), toVersion) < 1)
-            .reverse()
-            .map(entry => [entry[0], el('p', {}, fromHTMLString(entry[1]))])
-            .map(([k, v], idx) => idx > 0 ? [el('div', { classes: ['card__header'] }, el('span', { classes: ['card__subtitle'] }, `Version ${k}`)), v] : v)
-            .flat(Infinity);
-        if (!description.length) return;
-
-        const disableCheckbox = !autoPopup ? null : el('div', { classes: ['card__field-container'] },
-            el('div', { classes: ['card__field'] },
-                el('input', {
-                    type: 'checkbox',
-                    id: 'dgg-tweaks-dont-show-again',
-                    name: 'dgg-tweaks-dont-show-again',
-                    checked: !settings['show-changelogs'],
-                    events: { change: e => changeSetting('show-changelogs', !e.target.checked) }
-                })
-            ),
-            el('label', { classes: ['card__field-label'], for: 'dgg-tweaks-dont-show-again' }, "Don't show this again"),
-        );
-
-        const dialog = el('dialog', { classes: ['card', 'card--prominent', 'dgg-tweaks-update-dialog'] },
-            el('div', { classes: ['card__header'] },
-                el('span', { classes: ['card__title'] }, "DGG Tweaks Changes"),
-                el('span', { classes: ['card__subtitle'] }, `Version ${VERSION}`),
-            ),
-            el('div', { classes: ['card__description'] }, ...description),
-            el('div', { classes: ['card__extra', 'card__extra--right'] },
-                disableCheckbox,
-                el('button', { classes: ['button', 'button--secondary'], events: { click: () => dialog.remove() } }, "Close")
-            )
-        ).build();
-        document.body.appendChild(dialog);
-        dialog.showModal();
-        dialog.addEventListener('click', function (event) {
-            var rect = dialog.getBoundingClientRect();
-            var isInDialog = (rect.top <= event.clientY && event.clientY <= rect.top + rect.height &&
-                rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
-            if (!isInDialog) {
-                dialog.remove();
-            }
-        });
-    }
-}
-
-async function changelogDialog() {
-    // Prior to version 1.5, we have no version saved, but still want to show the changelog. After this point, default to no changelog shown on first entry
-    let prevVersion = (await chrome.storage.sync.get('version')).version ?? (compareVersions(VERSION, "1.5") == 0 ? "1.4" : VERSION);
-    await chrome.storage.sync.set({ version: VERSION });
-    if (settings['show-changelogs']) showChangelogDialog(prevVersion, VERSION, true);
+    document.getElementById('chat-settings-form').appendChild(menu);
 }
 
 // LINK AGGREGATION BUTTON
@@ -540,6 +376,10 @@ function applyDGGLayoutFix() {
 }
 
 // MENTION BUTTON
+function getCurrentChatUsername() {
+    return document.getElementById("chat-input-control")?.placeholder?.split(' ')[2];
+}
+
 async function openMentionsPopup() {
     const mentionsButton = document.getElementById('dgg-tweaks-mentions-btn');
 
@@ -548,7 +388,7 @@ async function openMentionsPopup() {
     mentionsButton._tippy.setContent(`<div class='dgg-tweaks-mentions-popup' style='padding: 8px 12px;'>Loading...</div>`);
     mentionsButton._tippy.show();
 
-    const username = document.getElementById("chat-input-control").placeholder.split(' ')[2];
+    const username = getCurrentChatUsername();
 
     let messages = [];
 
@@ -572,6 +412,35 @@ async function openMentionsPopup() {
         mentionsButton._tippy.setContent(popupContent.outerHTML);
     }
     else mentionsButton._tippy.setContent("<div class='dgg-tweaks-mentions-popup'>No mentions found</div>");
+}
+
+function openRustlesearch() {
+    const username = getCurrentChatUsername();
+    if (!username) return;
+
+    const url = new URL('https://rustlesearch.dev/');
+    url.searchParams.set('channel', 'Destinygg');
+    url.searchParams.set('start_date', '2010-01-01');
+    url.searchParams.set('username', username);
+    window.open(url.toString(), '_blank', 'noopener');
+}
+
+function addRustlesearchButton() {
+    var rustlesearchButton = document.getElementById('dgg-tweaks-rustlesearch-btn');
+    if (!settings["rustlesearch-button"]) rustlesearchButton?.remove();
+    else if (!rustlesearchButton) {
+        const mentionsButton = document.getElementById('dgg-tweaks-mentions-btn');
+        const whisperButton = document.getElementById('chat-whisper-btn');
+        const anchorButton = mentionsButton ?? whisperButton;
+        if (!anchorButton) return;
+
+        rustlesearchButton = anchorButton.cloneNode(true);
+        rustlesearchButton.id = 'dgg-tweaks-rustlesearch-btn';
+        rustlesearchButton.setAttribute('aria-label', 'Search your Rustlesearch logs');
+        anchorButton.after(rustlesearchButton);
+        rustlesearchButton.addEventListener('click', openRustlesearch);
+        rustlesearchButton.removeAttribute('data-tippy-content');
+    }
 }
 
 function addMentionsButton() {
@@ -666,18 +535,12 @@ async function onLoad() {
         UTIL.injectStylesheet('css/link-size.css');
         registerInfoObserver();
     } else {
-        globalNavbarSettingsButton();
-        changelogDialog();
     }
     if (PAGE_TYPE === PAGE_TYPES.BIGSCREEN) {
         toggleCinemaModeTop();
         toggleCinemaModeBottom();
         UTIL.injectStylesheet('css/dgg-layout-fix.css', settings['dgg-layout-fix']);
         if (settings['dgg-layout-fix']) applyDGGLayoutFix();
-    }
-    if (PAGE_TYPE === PAGE_TYPES.SETTINGS) {
-        profileSettingsNavbar();
-        if (window.location.search === '?dgg-tweaks') profileSettingsMenu();
     }
 }
 
@@ -687,6 +550,7 @@ async function onSettingsChanged() {
         document.body.style.setProperty('--link-size', isNaN(Number(settings['link-size'])) ? 0 : settings['link-size'] - 1);
         addLinkAggregationButton();
         addMentionsButton();
+        addRustlesearchButton();
         registerInfoObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();
     }
