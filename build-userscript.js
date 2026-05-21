@@ -54,6 +54,7 @@ const metadata = `// ==UserScript==
 // @version      ${version}
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
+// @license      MIT
 // @icon         ${iconUrls.links}
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
