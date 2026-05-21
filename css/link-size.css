@@ -2,6 +2,11 @@
     position: relative;
 }
 
+.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {
+    color: #08c;
+    text-decoration: underline;
+}
+
 #dgg-tweaks-link-hitboxes {
     position: fixed;
     inset: 0;

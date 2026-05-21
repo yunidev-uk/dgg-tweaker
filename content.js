@@ -214,6 +214,7 @@ function addLinkAggregationButton() {
 
 let linkHitboxRefreshId = null;
 let linkSizeHandlersRegistered = false;
+let expandedLinkHoverTarget = null;
 
 function getLinkHitboxLayer() {
     let layer = document.getElementById('dgg-tweaks-link-hitboxes');
@@ -240,7 +241,16 @@ function pointDistanceFromRect(x, y, rect) {
     return Math.hypot(dx, dy);
 }
 
+function isExpandedLinkPointAvailable(x, y) {
+    const topElement = document.elementFromPoint(x, y);
+    if (!topElement) return false;
+
+    return Boolean(topElement.closest('.msg-chat'));
+}
+
 function findExpandedLinkAtPoint(x, y) {
+    if (!isExpandedLinkPointAvailable(x, y)) return null;
+
     let best = null;
     let bestDistance = Infinity;
 
@@ -294,10 +304,19 @@ function maybeFollowExpandedLink(event) {
 function updateExpandedLinkCursor(event) {
     if (event.target.closest('a, button, input, textarea, select, [role="button"]')) {
         document.body.classList.remove('dgg-tweaks-expanded-link-hover');
+        expandedLinkHoverTarget?.classList.remove('dgg-tweaks-expanded-link-hover');
+        expandedLinkHoverTarget = null;
         return;
     }
 
-    document.body.classList.toggle('dgg-tweaks-expanded-link-hover', Boolean(findExpandedLinkAtPoint(event.clientX, event.clientY)));
+    const link = findExpandedLinkAtPoint(event.clientX, event.clientY);
+    document.body.classList.toggle('dgg-tweaks-expanded-link-hover', Boolean(link));
+
+    if (expandedLinkHoverTarget !== link) {
+        expandedLinkHoverTarget?.classList.remove('dgg-tweaks-expanded-link-hover');
+        expandedLinkHoverTarget = link;
+        expandedLinkHoverTarget?.classList.add('dgg-tweaks-expanded-link-hover');
+    }
 }
 
 function refreshLinkHitboxes() {
