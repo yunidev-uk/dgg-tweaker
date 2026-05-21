@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DGG Tweaks
 // @namespace    https://github.com/dgg-tweaker
-// @version      1.20.0
+// @version      2.0.0
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
 // @icon         data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E
@@ -104,12 +104,12 @@ class HTMLNode {
     }
 
     children(...children) {
-        this._children.push(children.flat(Infinity));
+        this._children.push(...children.flat(Infinity));
         return this;
     }
 
     attrs(attrs) {
-        Object.assign(this.args, attrs);
+        Object.assign(this._args, attrs);
         return this;
     }
 }
@@ -202,7 +202,7 @@ const REGEXES = (() => {
 
         convert(urlString) {
             if (!urlString) {
-                throw new Error(MISSING_ARG_ERROR);
+                throw new Error('Missing URL');
             }
             const url = new URL(
                 // if a url doesn't have a protocol, URL throws an error
@@ -232,7 +232,7 @@ const REGEXES = (() => {
                     timestamp = url.searchParams.get('t');
                     videoId = url.searchParams.get('v') ?? match?.[1];
                     if (!videoId) {
-                        throw new Error(MISSING_VIDEO_ID_ERROR);
+                        throw new Error('Missing video ID');
                     }
                     return timestamp
                         ? `#youtube/${videoId}?t=${timestamp}`
@@ -249,15 +249,15 @@ const REGEXES = (() => {
                     if (match) {
                         return `#rumble/${match[1]}`;
                     }
-                    throw new Error(RUMBLE_EMBED_ERROR);
+                    throw new Error('Invalid Rumble embed URL');
                 case 'www.kick.com':
                 case 'kick.com':
                     if (url.searchParams.has('clip') || pathname.startsWith('video/')) {
-                        throw new Error(INVALID_LINK_ERROR);
+                        throw new Error('Invalid embed link');
                     }
                     return `#kick/${pathname}`;
                 default:
-                    throw new Error(INVALID_LINK_ERROR);
+                    throw new Error('Invalid embed link');
             }
         }
     }
@@ -360,6 +360,7 @@ const REGEXES = (() => {
 
     return { renderChatMessage };
 })();
+
 
 // SETTINGS
 
@@ -514,11 +515,9 @@ function openLinkAggregatorPopup() {
         if (urls.has(linkEl.href)) continue;
 
         const message = linkEl.closest('div.msg-user');
-        //const username = linkEl.closest('div.msg-user')?.querySelector('a.user')?.textContent;
         if (!message) continue;
 
         urls.add(linkEl.href);
-        ['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']
         if (settings['aggregate-links-button'] === 'link') {
             messages.push(fromHTML(linkEl.cloneNode(true)));
         } else if (settings['aggregate-links-button'] === 'name') {
@@ -538,26 +537,50 @@ function openLinkAggregatorPopup() {
     else linkButton._tippy.show();
 }
 
+function removeChatToolButton(id) {
+    const button = document.getElementById(id);
+    button?._tippy?.destroy();
+    button?.remove();
+}
+
+function ensureClonedChatToolButton({ id, anchor, placement = 'after', onClick, ariaLabel, tippyOptions }) {
+    let button = document.getElementById(id);
+    if (button || !anchor) return button;
+
+    button = anchor.cloneNode(true);
+    button.id = id;
+    button.removeAttribute('data-tippy-content');
+    if (ariaLabel) button.setAttribute('aria-label', ariaLabel);
+    button.addEventListener('click', onClick);
+
+    if (placement === 'before') anchor.before(button);
+    else anchor.after(button);
+
+    if (tippyOptions) tippy(button, tippyOptions);
+    return button;
+}
+
+const CHAT_TOOL_TIPPY_OPTIONS = {
+    trigger: 'click',
+    interactive: true,
+    allowHTML: true,
+    content: "",
+    maxWidth: 'none',
+};
+
 function addLinkAggregationButton() {
-    var linkButton = document.getElementById('chat-aggregate-links-btn');
-    if (settings["aggregate-links-button"] === 'off') linkButton?.remove();
-    else {
-        if (!linkButton) {
-            const focusButton = document.getElementById('chat-watching-focus-btn');
-            linkButton = focusButton.cloneNode(true);
-            linkButton.id = 'chat-aggregate-links-btn';
-            focusButton.before(linkButton);
-            linkButton.addEventListener('click', openLinkAggregatorPopup);
-            linkButton.removeAttribute('data-tippy-content');
-            tippy(linkButton, {
-                trigger: 'click',
-                interactive: true,
-                allowHTML: true,
-                content: "",
-                maxWidth: 'none',
-            });
-        }
+    if (settings["aggregate-links-button"] === 'off') {
+        removeChatToolButton('chat-aggregate-links-btn');
+        return;
     }
+
+    ensureClonedChatToolButton({
+        id: 'chat-aggregate-links-btn',
+        anchor: document.getElementById('chat-watching-focus-btn'),
+        placement: 'before',
+        onClick: openLinkAggregatorPopup,
+        tippyOptions: CHAT_TOOL_TIPPY_OPTIONS,
+    });
 }
 
 let linkHitboxRefreshId = null;
@@ -936,41 +959,31 @@ function openRustlesearch() {
 }
 
 function addRustlesearchButton() {
-    var rustlesearchButton = document.getElementById('dgg-tweaks-rustlesearch-btn');
-    if (!settings["rustlesearch-button"]) rustlesearchButton?.remove();
-    else if (!rustlesearchButton) {
-        const mentionsButton = document.getElementById('dgg-tweaks-mentions-btn');
-        const whisperButton = document.getElementById('chat-whisper-btn');
-        const anchorButton = mentionsButton ?? whisperButton;
-        if (!anchorButton) return;
-
-        rustlesearchButton = anchorButton.cloneNode(true);
-        rustlesearchButton.id = 'dgg-tweaks-rustlesearch-btn';
-        rustlesearchButton.setAttribute('aria-label', 'Search your Rustlesearch logs');
-        anchorButton.after(rustlesearchButton);
-        rustlesearchButton.addEventListener('click', openRustlesearch);
-        rustlesearchButton.removeAttribute('data-tippy-content');
+    if (!settings["rustlesearch-button"]) {
+        removeChatToolButton('dgg-tweaks-rustlesearch-btn');
+        return;
     }
+
+    ensureClonedChatToolButton({
+        id: 'dgg-tweaks-rustlesearch-btn',
+        anchor: document.getElementById('dgg-tweaks-mentions-btn') ?? document.getElementById('chat-whisper-btn'),
+        onClick: openRustlesearch,
+        ariaLabel: 'Search your Rustlesearch logs',
+    });
 }
 
 function addMentionsButton() {
-    var mentionsButton = document.getElementById('dgg-tweaks-mentions-btn');
-    if (!settings["mentions-button"]) mentionsButton?.remove();
-    else if (!mentionsButton) {
-        const whisperButton = document.getElementById('chat-whisper-btn');
-        mentionsButton = whisperButton.cloneNode(true);
-        mentionsButton.id = 'dgg-tweaks-mentions-btn';
-        whisperButton.after(mentionsButton);
-        mentionsButton.addEventListener('click', openMentionsPopup);
-        mentionsButton.removeAttribute('data-tippy-content');
-        tippy(mentionsButton, {
-            trigger: 'click',
-            interactive: true,
-            allowHTML: true,
-            content: "",
-            maxWidth: 'none',
-        });
+    if (!settings["mentions-button"]) {
+        removeChatToolButton('dgg-tweaks-mentions-btn');
+        return;
     }
+
+    ensureClonedChatToolButton({
+        id: 'dgg-tweaks-mentions-btn',
+        anchor: document.getElementById('chat-whisper-btn'),
+        onClick: openMentionsPopup,
+        tippyOptions: CHAT_TOOL_TIPPY_OPTIONS,
+    });
 }
 
 // CINEMA MODE
