@@ -1,7 +1,5 @@
 // SETTINGS
 
-const VERSION = globalThis.DGG_TWEAKS_VERSION ?? "1.20";
-
 const STORAGE = {
     async get(key) {
         if (typeof GM_getValue === 'function') return GM_getValue(key);
@@ -20,8 +18,7 @@ const STORAGE = {
 const INPUT_TYPES = {
     CHECKBOX: Symbol('checkbox'),
     NUMBER_FIELD: Symbol('number_field'),
-    SELECT: Symbol('select'),
-    BUTTON: Symbol('button')
+    SELECT: Symbol('select')
 }
 const settingsMenuDef = [
     {
@@ -75,7 +72,6 @@ async function loadSettings() {
 const PAGE_TYPES = {
     BIGSCREEN: Symbol('bigscreen'),
     CHAT: Symbol('chat'),
-    SETTINGS: Symbol('settings'),
     DEFAULT: Symbol('default')
 };
 const PAGE_TYPE = getPageType();
@@ -85,7 +81,6 @@ function getPageType() {
 
     if (path === '/bigscreen') return PAGE_TYPES.BIGSCREEN;
     if (path === '/embed/chat') return PAGE_TYPES.CHAT;
-    if (path.startsWith('/profile')) return PAGE_TYPES.SETTINGS;
 
     return PAGE_TYPES.DEFAULT;
 }
@@ -127,16 +122,6 @@ const CHAT_UI = {
                 change: e => changeSetting(key, e.target.value)
             }
         }, ...options.map(option => el('option', { value: option[0], selected: option[0] === settings[key] ? true : undefined }, option[1])))
-    ),
-    [INPUT_TYPES.BUTTON]: (key, label, description, buttonText, click) => el('div', { classes: ['form-group', 'dgg-tweaks-setting'], id: 'dgg-tweaks-' + key },
-        el('label', { title: description, for: 'dgg-tweaks-' + key }, label),
-        el('input', {
-            classes: ['form-control'],
-            type: 'button',
-            name: 'dgg-tweaks-' + key,
-            events: { click },
-            value: buttonText
-        })
     )
 }
 

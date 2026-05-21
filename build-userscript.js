@@ -5,7 +5,7 @@ const root = __dirname;
 const outDir = path.join(root, 'dist');
 const outFile = path.join(outDir, 'dgg-tweaks.user.js');
 
-const version = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8')).version;
+const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 
 const cssFiles = [
     'css/base.css',
@@ -53,7 +53,8 @@ const metadata = `// ==UserScript==
 // @namespace    https://github.com/dgg-tweaker
 // @version      ${version}
 // @description  UI Tweaks for destiny.gg
-// @author       DGG Tweaks contributors
+// @author       yuniDev
+// @icon         ${iconUrls.links}
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
 // @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
@@ -65,7 +66,6 @@ const metadata = `// ==UserScript==
 
 const constants = `
 (function () {
-globalThis.DGG_TWEAKS_VERSION = ${JSON.stringify(version)};
 globalThis.DGG_TWEAKS_CSS = ${JSON.stringify(cssBundle)};
 
 `;
