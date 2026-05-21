@@ -36,6 +36,10 @@ input.form-control {
     font-weight: 600;
 }
 
+#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {
+    opacity: 0.55;
+}
+
 #chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {
     background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;
     background-size: contain;

@@ -56,6 +56,12 @@ let settings = {
     'rustlesearch-button': true
 };
 
+const SETTINGS_DISABLED_BY_DGG_LAYOUT_FIX = ['bigscreen-menubar', 'bigscreen-controls'];
+
+function isSettingDisabled(key) {
+    return settings['dgg-layout-fix'] && SETTINGS_DISABLED_BY_DGG_LAYOUT_FIX.includes(key);
+}
+
 function changeSetting(key, value) {
     settings[key] = value;
     STORAGE.set('settings', settings);
@@ -93,6 +99,7 @@ const CHAT_UI = {
                 name: 'dgg-tweaks-' + key,
                 type: 'checkbox',
                 checked: settings[key],
+                disabled: isSettingDisabled(key),
                 events: { change: e => changeSetting(key, e.target.checked) }
             }),
             label
@@ -140,6 +147,14 @@ function chatSettingsMenu() {
     ).build();
 
     document.getElementById('chat-settings-form').appendChild(menu);
+    updateDisabledSettings();
+}
+
+function updateDisabledSettings() {
+    for (const key of SETTINGS_DISABLED_BY_DGG_LAYOUT_FIX) {
+        const input = document.querySelector(`[name="dgg-tweaks-${key}"]`);
+        if (input) input.disabled = isSettingDisabled(key);
+    }
 }
 
 // LINK AGGREGATION BUTTON
@@ -706,6 +721,7 @@ async function onLoad() {
 
 async function onSettingsChanged() {
     if (PAGE_TYPE === PAGE_TYPES.CHAT) {
+        updateDisabledSettings();
         UTIL.injectStylesheet('css/link-size-debug.css', settings['link-size-debug']);
         scheduleLinkHitboxRefresh();
         addLinkAggregationButton();
