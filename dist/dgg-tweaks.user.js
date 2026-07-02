@@ -9,15 +9,17 @@
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
 // @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
+// @connect      kick.com
 // @connect      movies.zeul.dev
+// @connect      web.kick.com
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
-// @run-at       document-idle
+// @run-at       document-start
 // ==/UserScript==
 
 (function () {
-globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-movie-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-projector%22%3E%3Cpath%20d%3D%22M5%207%203%205%22%2F%3E%3Cpath%20d%3D%22M9%206V3%22%2F%3E%3Cpath%20d%3D%22m13%207%202-2%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2213%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M11.83%2012H20a2%202%200%200%201%202%202v4a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2v-4a2%202%200%200%201%202-2h2.17%22%2F%3E%3Cpath%20d%3D%22M16%2016h2%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn {\n    position: relative;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;\n    background-size: contain;\n    opacity: 0.45;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {\n    opacity: 1;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {\n    opacity: 0.65;\n}\n\n#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 8px;\n    height: 8px;\n    border-radius: 999px;\n    background: #e74c3c;\n    pointer-events: none;\n}\n\n.dgg-tweaks-movie-tooltip {\n    text-align: center;\n    white-space: nowrap;\n}\n\n.dgg-tweaks-movie-tooltip strong {\n    display: block;\n}\n\n.dgg-tweaks-movie-tooltip span {\n    display: block;\n    font-size: 12px;\n    opacity: 0.85;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
+globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-movie-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-projector%22%3E%3Cpath%20d%3D%22M5%207%203%205%22%2F%3E%3Cpath%20d%3D%22M9%206V3%22%2F%3E%3Cpath%20d%3D%22m13%207%202-2%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2213%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M11.83%2012H20a2%202%200%200%201%202%202v4a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2v-4a2%202%200%200%201%202-2h2.17%22%2F%3E%3Cpath%20d%3D%22M16%2016h2%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn {\n    position: relative;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;\n    background-size: contain;\n    opacity: 0.45;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {\n    opacity: 1;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {\n    opacity: 0.65;\n}\n\n#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 8px;\n    height: 8px;\n    border-radius: 999px;\n    background: #e74c3c;\n    pointer-events: none;\n}\n\n.dgg-tweaks-movie-tooltip {\n    text-align: center;\n    white-space: nowrap;\n}\n\n.dgg-tweaks-movie-tooltip strong {\n    display: block;\n}\n\n.dgg-tweaks-movie-tooltip span {\n    display: block;\n    font-size: 12px;\n    opacity: 0.85;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n.msg-chat.dgg-tweaks-kick .user::before {\n    content: \"\";\n    display: inline-block;\n    width: 0.95em;\n    height: 0.95em;\n    margin-right: 0.3em;\n    background: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath d='M37 .036h164.448v113.621h54.71v-56.82h54.731V.036h164.448v170.777h-54.73v56.82h-54.711v56.8h54.71v56.82h54.73V512.03H310.89v-56.82h-54.73v-56.8h-54.711v113.62H37V.036z' fill='%2353fc18'/%3E%3C/svg%3E\") no-repeat center center;\n    background-size: contain;\n    vertical-align: -0.12em;\n}\n\n.msg-chat.dgg-tweaks-kick .dgg-tweaks-kick-emote {\n    display: inline-block;\n    width: auto;\n    height: 1.8em;\n    max-width: 8em;\n    margin: -0.35em 0.08em;\n    object-fit: contain;\n    vertical-align: middle;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
 
 var UTIL = (() => {
 
@@ -365,6 +367,104 @@ const REGEXES = (() => {
 })();
 
 
+// DGG CHAT SOCKET HOOK
+
+const DGG_TWEAKS_DGG_FRAME_EVENT = 'dgg-tweaks:inject-dgg-frame';
+const DGG_TWEAKS_DGG_FRAME_STATUS_EVENT = 'dgg-tweaks:dgg-frame-status';
+
+function installDggChatWebSocketBridgeHook() {
+    if (window.__DGG_TWEAKS_DGG_SOCKET_HOOK_INJECTED__) return;
+    window.__DGG_TWEAKS_DGG_SOCKET_HOOK_INJECTED__ = true;
+
+    const script = document.createElement('script');
+    script.textContent = `(() => {
+        if (window.__DGG_TWEAKS_DGG_SOCKET_HOOK_INSTALLED__) return;
+
+        const OriginalWebSocket = window.WebSocket;
+        let dggSocket = null;
+
+        function emitStatus(status, detail = {}) {
+            document.dispatchEvent(new CustomEvent('${DGG_TWEAKS_DGG_FRAME_STATUS_EVENT}', {
+                detail: { status, ...detail }
+            }));
+        }
+
+        function isDggChatSocket(url) {
+            try {
+                const parsed = new URL(String(url), window.location.href);
+                return parsed.protocol.startsWith('ws') && (
+                    parsed.pathname.includes('/chat') ||
+                    parsed.hostname === 'destiny.gg' ||
+                    parsed.hostname.endsWith('.destiny.gg')
+                );
+            } catch {
+                return String(url).includes('/chat');
+            }
+        }
+
+        function TweakedWebSocket(url, protocols) {
+            const socket = arguments.length > 1
+                ? new OriginalWebSocket(url, protocols)
+                : new OriginalWebSocket(url);
+
+            if (isDggChatSocket(url)) {
+                dggSocket = socket;
+                emitStatus('socket-captured', { url: String(url) });
+            }
+            return socket;
+        }
+
+        Object.setPrototypeOf(TweakedWebSocket, OriginalWebSocket);
+        TweakedWebSocket.prototype = OriginalWebSocket.prototype;
+        for (const key of Object.getOwnPropertyNames(OriginalWebSocket)) {
+            if (key in TweakedWebSocket) continue;
+            Object.defineProperty(TweakedWebSocket, key, Object.getOwnPropertyDescriptor(OriginalWebSocket, key));
+        }
+
+        window.WebSocket = TweakedWebSocket;
+        window.__DGG_TWEAKS_DGG_SOCKET_HOOK_INSTALLED__ = true;
+        emitStatus('installed');
+
+        document.addEventListener('${DGG_TWEAKS_DGG_FRAME_EVENT}', event => {
+            if (!dggSocket) {
+                emitStatus('no-socket');
+                return;
+            }
+
+            const messageEvent = new MessageEvent('message', { data: event.detail });
+            if (typeof dggSocket.onmessage === 'function') {
+                dggSocket.onmessage(messageEvent);
+                emitStatus('injected', { via: 'onmessage' });
+                return;
+            }
+
+            dggSocket.dispatchEvent(messageEvent);
+            emitStatus('injected', { via: 'dispatchEvent' });
+        });
+    })();`;
+
+    (document.documentElement || document.head || document.body).appendChild(script);
+    script.remove();
+}
+
+document.addEventListener(DGG_TWEAKS_DGG_FRAME_STATUS_EVENT, event => {
+    if (event.detail?.status === 'no-socket') {
+        console.warn('[DGG Tweaks] Could not inject synthetic chat message because the DGG chat websocket was not captured.');
+        return;
+    }
+
+    if (event.detail?.status === 'installed') {
+        console.info('[DGG Tweaks] DGG chat websocket hook installed.');
+        return;
+    }
+
+    if (event.detail?.status === 'socket-captured') {
+        console.info('[DGG Tweaks] DGG chat websocket captured.', event.detail.url);
+    }
+});
+
+if (window.location.pathname === '/embed/chat') installDggChatWebSocketBridgeHook();
+
 // SETTINGS
 
 const STORAGE = {
@@ -396,6 +496,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
+            [INPUT_TYPES.CHECKBOX, 'kick-chat-bridge', "Kick Chat Messages", "Shows kick.com/destiny chat messages in DGG chat"],
             [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
@@ -424,6 +525,7 @@ let settings = {
     'mentions-force-timestamps': false,
     'rustlesearch-button': true,
     'movie-button': false,
+    'kick-chat-bridge': false,
     'collapse-combo-emotes': false
 };
 
@@ -1484,6 +1586,346 @@ function toggleCinemaModeBottom() {
     header.classList.add(showClass);
 }
 
+// KICK CHAT BRIDGE
+
+const KICK_CHAT_BRIDGE_CONFIG = {
+    fallbackChannelId: 1772249,
+    fallbackChatroomId: 1764849,
+    channelSlug: 'destiny',
+    featureClass: 'dgg-tweaks-kick',
+    maxSeenMessages: 1000,
+    historyPollIntervalMs: 2500
+};
+
+const kickChatBridgeState = {
+    enabled: false,
+    connecting: false,
+    pollTimer: null,
+    seenIds: new Set(),
+    seenQueue: [],
+    channelId: null,
+    chatroomId: null
+};
+
+function gmJsonRequest(url) {
+    return new Promise((resolve, reject) => {
+        if (typeof GM_xmlhttpRequest !== 'function') {
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.json();
+                })
+                .then(resolve, reject);
+            return;
+        }
+
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url,
+            responseType: 'json',
+            onload: response => {
+                if (response.status < 200 || response.status >= 300) {
+                    reject(new Error(`HTTP ${response.status}`));
+                    return;
+                }
+
+                if (response.response) {
+                    resolve(response.response);
+                    return;
+                }
+
+                try {
+                    resolve(JSON.parse(response.responseText));
+                } catch (error) {
+                    reject(error);
+                }
+            },
+            onerror: reject,
+            ontimeout: () => reject(new Error('Request timed out'))
+        });
+    });
+}
+
+async function discoverKickChannel() {
+    try {
+        const data = await gmJsonRequest(`https://kick.com/api/v2/channels/${KICK_CHAT_BRIDGE_CONFIG.channelSlug}`);
+        const channelId = Number(data?.id);
+        const chatroomId = Number(data?.chatroom?.id);
+        if (Number.isFinite(channelId) && channelId > 0 && Number.isFinite(chatroomId) && chatroomId > 0) {
+            return { channelId, chatroomId };
+        }
+    } catch (error) {
+        console.warn('[DGG Tweaks] Kick channel discovery failed; using fallback ids.', error);
+    }
+
+    return {
+        channelId: KICK_CHAT_BRIDGE_CONFIG.fallbackChannelId,
+        chatroomId: KICK_CHAT_BRIDGE_CONFIG.fallbackChatroomId
+    };
+}
+
+function normalizeKickContent(content) {
+    return String(content ?? '');
+}
+
+function kickEmoteImageUrl(id) {
+    return `https://files.kick.com/emotes/${encodeURIComponent(id)}/fullsize`;
+}
+
+function renderKickEmoteNode(id, name) {
+    const emote = document.createElement('img');
+    emote.className = 'emote dgg-tweaks-kick-emote';
+    emote.src = kickEmoteImageUrl(id);
+    emote.alt = name;
+    emote.title = name;
+    emote.loading = 'lazy';
+    emote.decoding = 'async';
+    emote.addEventListener('error', () => {
+        emote.replaceWith(document.createTextNode(name));
+    }, { once: true });
+    return emote;
+}
+
+function renderKickEmotesInTextNode(textNode) {
+    const tokenRegex = /\[emote:(\d+):([^\]]+)\]/g;
+    const text = textNode.textContent;
+    if (!tokenRegex.test(text)) return false;
+
+    tokenRegex.lastIndex = 0;
+    const fragment = document.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+
+    while ((match = tokenRegex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        }
+
+        fragment.appendChild(renderKickEmoteNode(match[1], match[2]));
+        lastIndex = tokenRegex.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
+
+    textNode.replaceWith(fragment);
+    return true;
+}
+
+function renderKickEmotesInMessage(messageEl) {
+    if (!messageEl?.matches?.('.msg-chat.dgg-tweaks-kick')) return;
+    if (messageEl.dataset.dggTweaksKickEmotesRendered === 'true') return;
+
+    const textEl = messageEl.querySelector(':scope > .text');
+    if (!textEl) return;
+
+    const walker = document.createTreeWalker(textEl, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    let changed = false;
+    for (const textNode of textNodes) {
+        changed = renderKickEmotesInTextNode(textNode) || changed;
+    }
+
+    if (changed) messageEl.dataset.dggTweaksKickEmotesRendered = 'true';
+}
+
+let kickEmoteObserver = null;
+let kickEmoteRootObserver = null;
+
+function renderKickEmotesInTree(root) {
+    if (root.matches?.('.msg-chat.dgg-tweaks-kick')) renderKickEmotesInMessage(root);
+    root.querySelectorAll?.('.msg-chat.dgg-tweaks-kick').forEach(renderKickEmotesInMessage);
+}
+
+function onKickEmoteMutations(mutations) {
+    for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            renderKickEmotesInTree(node);
+        }
+    }
+}
+
+function observeKickEmoteLines(linesEl) {
+    kickEmoteRootObserver?.disconnect();
+    kickEmoteRootObserver = null;
+    kickEmoteObserver?.disconnect();
+    kickEmoteObserver = new MutationObserver(onKickEmoteMutations);
+    kickEmoteObserver.observe(linesEl, { childList: true, subtree: true });
+    renderKickEmotesInTree(linesEl);
+}
+
+function registerKickEmoteObserver() {
+    kickEmoteObserver?.disconnect();
+    kickEmoteRootObserver?.disconnect();
+    kickEmoteObserver = null;
+    kickEmoteRootObserver = null;
+
+    if (!settings['kick-chat-bridge']) return;
+
+    const linesEl = document.querySelector('#chat-win-main .chat-lines') || document.querySelector('.chat-lines');
+    if (linesEl) {
+        observeKickEmoteLines(linesEl);
+        return;
+    }
+
+    kickEmoteRootObserver = new MutationObserver(() => {
+        const lines = document.querySelector('#chat-win-main .chat-lines') || document.querySelector('.chat-lines');
+        if (lines) observeKickEmoteLines(lines);
+    });
+    kickEmoteRootObserver.observe(document.body, { childList: true, subtree: true });
+}
+
+function syntheticKickNick(sender) {
+    const rawName = sender?.username || sender?.slug || `user_${sender?.id || 'unknown'}`;
+    const sanitized = String(rawName).replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+    return (sanitized || 'user').slice(0, 32);
+}
+
+function hasSeenKickMessage(id) {
+    if (!id) return false;
+    if (kickChatBridgeState.seenIds.has(id)) return true;
+
+    kickChatBridgeState.seenIds.add(id);
+    kickChatBridgeState.seenQueue.push(id);
+
+    while (kickChatBridgeState.seenQueue.length > KICK_CHAT_BRIDGE_CONFIG.maxSeenMessages) {
+        const removed = kickChatBridgeState.seenQueue.shift();
+        kickChatBridgeState.seenIds.delete(removed);
+    }
+
+    return false;
+}
+
+function injectSyntheticDggMessage(kickMessage) {
+    const text = normalizeKickContent(kickMessage?.content);
+    if (!text.trim()) return;
+
+    const sender = kickMessage.sender || {};
+    const nick = syntheticKickNick(sender);
+    const payload = {
+        id: `kick:${sender.id || sender.slug || nick}`,
+        nick,
+        features: [KICK_CHAT_BRIDGE_CONFIG.featureClass],
+        roles: [],
+        createdDate: '',
+        data: text,
+        timestamp: kickMessage.created_at || new Date().toISOString()
+    };
+
+    document.dispatchEvent(new CustomEvent(DGG_TWEAKS_DGG_FRAME_EVENT, {
+        detail: `MSG ${JSON.stringify(payload)}`
+    }));
+}
+
+function extractKickHistoryMessages(data) {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.messages)) return data.messages;
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.data?.messages)) return data.data.messages;
+    return [];
+}
+
+function sortKickMessages(messages) {
+    return [...messages].sort((a, b) => {
+        const aTime = new Date(a.created_at || 0).getTime();
+        const bTime = new Date(b.created_at || 0).getTime();
+        return aTime - bTime;
+    });
+}
+
+async function pollKickChatHistory({ primeOnly = false } = {}) {
+    if (!kickChatBridgeState.enabled || !kickChatBridgeState.channelId) return;
+
+    try {
+        const data = await gmJsonRequest(`https://web.kick.com/api/v1/chat/${kickChatBridgeState.channelId}/history`);
+        const messages = sortKickMessages(extractKickHistoryMessages(data));
+
+        for (const message of messages) {
+            if (message?.type !== 'message') continue;
+            if (hasSeenKickMessage(message.id)) continue;
+            if (!primeOnly) injectSyntheticDggMessage(message);
+        }
+    } catch (error) {
+        console.warn('[DGG Tweaks] Kick history poll failed.', error);
+    }
+}
+
+function scheduleKickChatPoll() {
+    if (!kickChatBridgeState.enabled || kickChatBridgeState.pollTimer) return;
+
+    const tick = async () => {
+        kickChatBridgeState.pollTimer = null;
+        if (!kickChatBridgeState.enabled) return;
+
+        await pollKickChatHistory();
+        if (kickChatBridgeState.enabled) scheduleKickChatPoll();
+    };
+
+    kickChatBridgeState.pollTimer = setTimeout(tick, KICK_CHAT_BRIDGE_CONFIG.historyPollIntervalMs);
+}
+
+async function startKickChatPolling() {
+    if (!kickChatBridgeState.enabled) return;
+
+    const channel = await ensureKickChannelIds();
+    if (!kickChatBridgeState.enabled) return;
+
+    kickChatBridgeState.channelId = channel.channelId;
+    kickChatBridgeState.chatroomId = channel.chatroomId;
+
+    await pollKickChatHistory({ primeOnly: true });
+    scheduleKickChatPoll();
+}
+
+async function ensureKickChannelIds() {
+    if (kickChatBridgeState.channelId && kickChatBridgeState.chatroomId) {
+        return {
+            channelId: kickChatBridgeState.channelId,
+            chatroomId: kickChatBridgeState.chatroomId
+        };
+    }
+
+    const channel = await discoverKickChannel();
+    kickChatBridgeState.channelId = channel.channelId;
+    kickChatBridgeState.chatroomId = channel.chatroomId;
+    return channel;
+}
+
+async function startKickChatBridge() {
+    if (!kickChatBridgeState.enabled) return;
+    if (kickChatBridgeState.connecting) return;
+
+    kickChatBridgeState.connecting = true;
+
+    try {
+        await startKickChatPolling();
+    } catch (error) {
+        console.warn('[DGG Tweaks] Kick chat polling startup failed.', error);
+    } finally {
+        kickChatBridgeState.connecting = false;
+    }
+}
+
+function stopKickChatBridge() {
+    kickChatBridgeState.enabled = false;
+    clearTimeout(kickChatBridgeState.pollTimer);
+    kickChatBridgeState.pollTimer = null;
+}
+
+function syncKickChatBridge() {
+    if (PAGE_TYPE !== PAGE_TYPES.CHAT || !settings['kick-chat-bridge']) {
+        stopKickChatBridge();
+        return;
+    }
+
+    kickChatBridgeState.enabled = true;
+    startKickChatBridge();
+}
+
 // MAIN
 
 async function onLoad() {
@@ -1511,6 +1953,8 @@ async function onSettingsChanged() {
         addMentionsButton();
         addRustlesearchButton();
         addMovieStatusButton();
+        syncKickChatBridge();
+        registerKickEmoteObserver();
         registerInfoObserver();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();

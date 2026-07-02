@@ -119,6 +119,27 @@ div.tippy-content:has(> .dgg-tweaks-mentions-popup) {
     display: none !important;
 }
 
+.msg-chat.dgg-tweaks-kick .user::before {
+    content: "";
+    display: inline-block;
+    width: 0.95em;
+    height: 0.95em;
+    margin-right: 0.3em;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath d='M37 .036h164.448v113.621h54.71v-56.82h54.731V.036h164.448v170.777h-54.73v56.82h-54.711v56.8h54.71v56.82h54.73V512.03H310.89v-56.82h-54.73v-56.8h-54.711v113.62H37V.036z' fill='%2353fc18'/%3E%3C/svg%3E") no-repeat center center;
+    background-size: contain;
+    vertical-align: -0.12em;
+}
+
+.msg-chat.dgg-tweaks-kick .dgg-tweaks-kick-emote {
+    display: inline-block;
+    width: auto;
+    height: 1.8em;
+    max-width: 8em;
+    margin: -0.35em 0.08em;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
 
 #dgg-tweaks-menubar-hover {
     position: absolute;

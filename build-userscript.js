@@ -61,11 +61,13 @@ const metadata = `// ==UserScript==
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
 // @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
+// @connect      kick.com
 // @connect      movies.zeul.dev
+// @connect      web.kick.com
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
-// @run-at       document-idle
+// @run-at       document-start
 // ==/UserScript==
 `;
 
