@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DGG Tweaks
 // @namespace    yuniDev.dgg-tweaks
-// @version      2.0.1
+// @version      2.0.2
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
 // @license      MIT
@@ -393,6 +393,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
+            [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
             [INPUT_TYPES.SELECT, 'aggregate-links-button', "'Aggregate Links' Button", "Mode for a new 'Aggregate Links' button in chat", [['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']]],
@@ -418,7 +419,8 @@ let settings = {
     'dgg-layout-fix': false,
     'mentions-button': true,
     'mentions-force-timestamps': false,
-    'rustlesearch-button': true
+    'rustlesearch-button': true,
+    'collapse-combo-emotes': false
 };
 
 const SETTINGS_DISABLED_BY_DGG_LAYOUT_FIX = ['bigscreen-menubar', 'bigscreen-controls'];
@@ -883,6 +885,183 @@ function registerInfoObserver() {
     }
 }
 
+// COLLAPSE COMBO EMOTES
+const COLLAPSE_COMBO_RECENT_ROW_LIMIT = 10;
+const COMBO_STEP_CLASSES = ['x2', 'x5', 'x10', 'x20', 'x30', 'x50'];
+let collapseComboObserver = null;
+let collapseComboRootObserver = null;
+
+function getComboStepClass(count) {
+    if (count >= 50) return 'x50';
+    if (count >= 30) return 'x30';
+    if (count >= 20) return 'x20';
+    if (count >= 10) return 'x10';
+    if (count >= 5) return 'x5';
+    return 'x2';
+}
+
+function isVisibleChatRow(messageEl) {
+    return getComputedStyle(messageEl).display !== 'none';
+}
+
+function getRenderedEmoteName(emoteEl) {
+    return emoteEl.getAttribute('title') || emoteEl.textContent.trim();
+}
+
+function getRenderedComboCount(messageEl) {
+    const dataCount = parseInt(messageEl.getAttribute('data-combo'), 10);
+    if (Number.isFinite(dataCount)) return dataCount;
+
+    const renderedCount = parseInt(messageEl.querySelector(':scope > .chat-combo .count')?.textContent, 10);
+    return Number.isFinite(renderedCount) ? renderedCount : 1;
+}
+
+function getComboMessageInfo(messageEl) {
+    if (!messageEl?.matches?.('.msg-user, .msg-emote')) return null;
+
+    const textEl = messageEl.querySelector(':scope > .text');
+    if (!textEl) return null;
+
+    const emotes = [];
+    for (const node of textEl.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            if (node.textContent.trim() !== '') return null;
+            continue;
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('emote')) {
+            const emote = getRenderedEmoteName(node);
+            if (!emote) return null;
+            emotes.push(emote);
+            continue;
+        }
+
+        return null;
+    }
+
+    if (emotes.length === 0) return null;
+    if (!emotes.every(emote => emote === emotes[0])) return null;
+
+    return {
+        emote: emotes[0],
+        count: getRenderedComboCount(messageEl)
+    };
+}
+
+function getRecentMatchingComboTarget(messageEl, emote) {
+    let rowsSeen = 0;
+    let current = messageEl.previousElementSibling;
+
+    while (current && rowsSeen < COLLAPSE_COMBO_RECENT_ROW_LIMIT) {
+        if (current.matches?.('.msg-chat') && isVisibleChatRow(current)) {
+            rowsSeen += 1;
+            const currentInfo = current.matches?.('.msg-emote') && getComboMessageInfo(current);
+            if (currentInfo?.emote === emote) return current;
+        }
+        current = current.previousElementSibling;
+    }
+
+    return null;
+}
+
+function ensureComboElement(messageEl) {
+    let combo = messageEl.querySelector(':scope > .chat-combo');
+    if (combo) return combo;
+    if (!messageEl.matches?.('.msg-emote')) return null;
+
+    combo = el('span', { classes: ['chat-combo'] },
+        el('i', { classes: ['count'] }, '1'),
+        ' ',
+        el('i', { classes: ['x'] }, 'X'),
+        ' ',
+        el('i', { classes: ['hit'] }, 'Hits'),
+        ' ',
+        el('i', { classes: ['combo'] }, 'C-C-C-COMBO')
+    ).build();
+
+    const textEl = messageEl.querySelector(':scope > .text');
+    textEl?.after(combo);
+    return combo;
+}
+
+function updateCollapsedCombo(messageEl, count) {
+    const stepClass = getComboStepClass(count);
+    const combo = ensureComboElement(messageEl);
+    if (!combo) return false;
+    const textEl = messageEl.querySelector(':scope > .text');
+
+    messageEl.setAttribute('data-combo', count);
+    messageEl.setAttribute('data-combo-group', stepClass);
+    combo.classList.remove(...COMBO_STEP_CLASSES, 'combo-complete');
+    combo.classList.add(stepClass);
+    combo.querySelector('.count').textContent = String(count);
+
+    if (textEl) {
+        textEl.remove();
+        combo.remove();
+        messageEl.append(textEl, combo);
+    }
+
+    return true;
+}
+
+function collapseComboMessage(messageEl) {
+    const messageInfo = getComboMessageInfo(messageEl);
+    if (!messageInfo) return;
+
+    const target = getRecentMatchingComboTarget(messageEl, messageInfo.emote);
+    if (!target) return;
+
+    const targetInfo = getComboMessageInfo(target);
+    if (!targetInfo) return;
+
+    if (updateCollapsedCombo(target, targetInfo.count + 1)) {
+        messageEl.remove();
+    }
+}
+
+function onCollapseComboMutations(mutations) {
+    for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            if (node.matches?.('.msg-chat')) {
+                collapseComboMessage(node);
+            } else {
+                node.querySelectorAll?.('.msg-chat').forEach(collapseComboMessage);
+            }
+        }
+    }
+}
+
+function observeCollapseComboLines(linesEl) {
+    collapseComboRootObserver?.disconnect();
+    collapseComboRootObserver = null;
+    collapseComboObserver?.disconnect();
+    collapseComboObserver = new MutationObserver(onCollapseComboMutations);
+    collapseComboObserver.observe(linesEl, { childList: true });
+}
+
+function registerCollapseComboObserver() {
+    collapseComboObserver?.disconnect();
+    collapseComboRootObserver?.disconnect();
+    collapseComboObserver = null;
+    collapseComboRootObserver = null;
+
+    if (!settings['collapse-combo-emotes']) return;
+
+    const linesEl = document.querySelector('#chat-win-main .chat-lines') || document.querySelector('.chat-lines');
+    if (linesEl) {
+        observeCollapseComboLines(linesEl);
+        return;
+    }
+
+    collapseComboRootObserver = new MutationObserver(() => {
+        const lines = document.querySelector('#chat-win-main .chat-lines') || document.querySelector('.chat-lines');
+        if (lines) observeCollapseComboLines(lines);
+    });
+    collapseComboRootObserver.observe(document.body, { childList: true, subtree: true });
+}
+
 // DGG-LAYOUT-FIX
 function applyDGGLayoutFix() {
     const moveBefore = (el, newSibling) => newSibling?.parentNode?.insertBefore(el, newSibling);
@@ -1093,6 +1272,7 @@ async function onSettingsChanged() {
         addMentionsButton();
         addRustlesearchButton();
         registerInfoObserver();
+        registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();
     }
 }
