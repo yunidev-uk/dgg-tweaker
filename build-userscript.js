@@ -78,8 +78,10 @@ globalThis.DGG_TWEAKS_CSS = ${JSON.stringify(cssBundle)};
 `;
 
 const sources = [
+    read('lib/dgg-message-injector.js'),
     read('lib/util.js'),
     read('lib/regex.js'),
+    read('lib/kick-chat.js'),
     read('content.js')
 ].join('\n\n');
 
