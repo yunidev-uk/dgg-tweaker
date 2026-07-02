@@ -60,6 +60,50 @@ input.form-control {
     background-size: contain;
 }
 
+#chat-tools-wrap #dgg-tweaks-movie-btn {
+    position: relative;
+}
+
+#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {
+    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;
+    background-size: contain;
+    opacity: 0.45;
+}
+
+#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {
+    opacity: 1;
+}
+
+#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {
+    opacity: 0.65;
+}
+
+#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #e74c3c;
+    pointer-events: none;
+}
+
+.dgg-tweaks-movie-tooltip {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dgg-tweaks-movie-tooltip strong {
+    display: block;
+}
+
+.dgg-tweaks-movie-tooltip span {
+    display: block;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
 .dgg-tweaks-mentions-popup {
     background: #080808;
     padding: 8px 0px;

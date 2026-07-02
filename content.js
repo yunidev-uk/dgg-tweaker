@@ -28,6 +28,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
+            [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
             [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
@@ -55,6 +56,7 @@ let settings = {
     'mentions-button': true,
     'mentions-force-timestamps': false,
     'rustlesearch-button': true,
+    'movie-button': false,
     'collapse-combo-emotes': false
 };
 
@@ -816,6 +818,241 @@ function addMentionsButton() {
     });
 }
 
+// MOVIE STATUS BUTTON
+const MOVIE_STATUS_URL = 'https://movies.zeul.dev/api/status';
+const MOVIE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const MOVIE_TICK_INTERVAL_MS = 1000;
+const MOVIE_POLL_EXPIRE_MS = 5 * 60 * 1000;
+
+let movieStatus = {
+    fetchOk: false,
+    scheduleType: 'Normal',
+    sessions: [],
+    lastPoll: null
+};
+let movieFetchTimer = null;
+let movieTickTimer = null;
+
+function requestJson(url) {
+    if (typeof GM_xmlhttpRequest === 'function') {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                method: 'GET',
+                url,
+                onload: response => {
+                    if (response.status < 200 || response.status >= 300) {
+                        reject(new Error(`Request failed with status ${response.status}`));
+                        return;
+                    }
+                    resolve(JSON.parse(response.responseText));
+                },
+                onerror: reject,
+                ontimeout: reject
+            });
+        });
+    }
+
+    if (typeof GM !== 'undefined' && typeof GM.xmlHttpRequest === 'function') {
+        return GM.xmlHttpRequest({ method: 'GET', url }).then(response => JSON.parse(response.responseText));
+    }
+
+    return fetch(url).then(response => {
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+        return response.json();
+    });
+}
+
+function parseMovieDate(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') {
+        const timestamp = value < 10000000000 ? value * 1000 : value;
+        const date = new Date(timestamp);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function normalizeMoviePoll(poll) {
+    if (!poll) return null;
+    if (typeof poll === 'string') return { url: poll, time: null };
+
+    const url = poll.url || poll.pollUrl || poll.link || poll.href;
+    if (!url) return null;
+
+    const time = parseMovieDate(
+        poll.time ||
+        poll.timestamp ||
+        poll.createdAt ||
+        poll.created_at ||
+        poll.detectedAt ||
+        poll.detected_at ||
+        poll.messageTimestamp ||
+        poll.date
+    );
+    return { url, time };
+}
+
+function getActiveMoviePoll() {
+    const poll = normalizeMoviePoll(movieStatus.lastPoll);
+    if (!poll) return null;
+    if (!poll.time) return poll;
+    return Date.now() - poll.time.getTime() <= MOVIE_POLL_EXPIRE_MS ? poll : null;
+}
+
+async function fetchMovieStatus() {
+    try {
+        const data = await requestJson(MOVIE_STATUS_URL);
+        movieStatus = {
+            fetchOk: true,
+            scheduleType: data.scheduleType || 'Normal',
+            sessions: (data.sessions || []).map(session => ({
+                start: parseMovieDate(session.start),
+                end: parseMovieDate(session.end)
+            })).filter(session => session.start && session.end).sort((a, b) => a.start - b.start),
+            lastPoll: data.lastPoll || null
+        };
+    } catch (error) {
+        movieStatus.fetchOk = false;
+        console.error('[dgg-tweaks] Failed to fetch movie status:', error);
+    }
+
+    updateMovieButton();
+}
+
+function getMovieScheduleStatus() {
+    const now = Date.now();
+    const activeSession = movieStatus.sessions.find(session => now >= session.start.getTime() && now < session.end.getTime());
+    if (activeSession) {
+        return {
+            state: 'live',
+            label: 'Movie Time',
+            detail: `Ends in ${formatDuration(activeSession.end.getTime() - now)}`
+        };
+    }
+
+    const nextSession = movieStatus.sessions.find(session => session.start.getTime() > now);
+    if (nextSession) {
+        const remaining = nextSession.start.getTime() - now;
+        return {
+            state: 'upcoming',
+            label: 'No Movies',
+            detail: remaining > 24 * 60 * 60 * 1000
+                ? formatMovieDate(nextSession.start)
+                : `Starts in ${formatDuration(remaining)}`
+        };
+    }
+
+    return {
+        state: 'off',
+        label: 'No Movies',
+        detail: 'No sessions scheduled'
+    };
+}
+
+function formatDuration(ms) {
+    if (ms === null || ms === undefined || ms <= 0) return '';
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+}
+
+function formatMovieDate(date) {
+    const day = date.toLocaleDateString(undefined, { weekday: 'long' });
+    const dayOfMonth = date.getDate();
+    const time = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+    return `${day} ${dayOfMonth}${getDaySuffix(dayOfMonth)} ${time}`;
+}
+
+function buildMovieTooltipContent(status, poll) {
+    const label = movieStatus.scheduleType && movieStatus.scheduleType !== 'Normal'
+        ? `${status.label} (${movieStatus.scheduleType})`
+        : status.label;
+    const pollAge = poll?.time ? `Poll posted ${formatDuration(Date.now() - poll.time.getTime())} ago` : 'Poll available';
+
+    return el('div', { classes: ['dgg-tweaks-movie-tooltip'] },
+        el('strong', {}, movieStatus.fetchOk ? label : 'Connection error'),
+        movieStatus.fetchOk && status.detail && el('span', {}, status.detail),
+        poll && el('span', {}, pollAge)
+    ).build().outerHTML;
+}
+
+function updateMovieButton() {
+    const button = document.getElementById('dgg-tweaks-movie-btn');
+    if (!button) return;
+
+    const status = movieStatus.fetchOk ? getMovieScheduleStatus() : { state: 'off', label: 'Connection error', detail: '' };
+    const poll = getActiveMoviePoll();
+
+    button.classList.toggle('dgg-tweaks-movie-live', status.state === 'live');
+    button.classList.toggle('dgg-tweaks-movie-upcoming', status.state === 'upcoming');
+    button.style.cursor = poll ? 'pointer' : '';
+    button.setAttribute('aria-label', poll ? 'Open the current movie poll' : 'Movie schedule status');
+
+    let dot = button.querySelector('.dgg-tweaks-movie-dot');
+    if (poll && !dot) {
+        dot = document.createElement('span');
+        dot.className = 'dgg-tweaks-movie-dot';
+        button.appendChild(dot);
+    } else if (!poll) {
+        dot?.remove();
+    }
+
+    button._tippy?.setContent(buildMovieTooltipContent(status, poll));
+}
+
+function openMoviePoll() {
+    const poll = getActiveMoviePoll();
+    window.open(poll?.url || 'https://dinkdonk.mov/', '_blank', 'noopener');
+}
+
+function stopMovieStatusButton() {
+    clearInterval(movieFetchTimer);
+    clearInterval(movieTickTimer);
+    movieFetchTimer = null;
+    movieTickTimer = null;
+    removeChatToolButton('dgg-tweaks-movie-btn');
+}
+
+function addMovieStatusButton() {
+    if (!settings["movie-button"]) {
+        stopMovieStatusButton();
+        return;
+    }
+
+    ensureClonedChatToolButton({
+        id: 'dgg-tweaks-movie-btn',
+        anchor: document.getElementById('chat-aggregate-links-btn') ?? document.getElementById('chat-watching-focus-btn'),
+        placement: 'before',
+        onClick: openMoviePoll,
+        ariaLabel: 'Movie schedule status',
+        tippyOptions: {
+            trigger: 'mouseenter focus',
+            allowHTML: true,
+            content: '',
+            onShow: () => {
+                updateMovieButton();
+            }
+        }
+    });
+
+    updateMovieButton();
+
+    if (!movieFetchTimer) {
+        fetchMovieStatus();
+        movieFetchTimer = setInterval(fetchMovieStatus, MOVIE_REFRESH_INTERVAL_MS);
+    }
+    if (!movieTickTimer) {
+        movieTickTimer = setInterval(updateMovieButton, MOVIE_TICK_INTERVAL_MS);
+    }
+}
+
 // CINEMA MODE
 
 function cinemaModeOpenTop() {
@@ -906,6 +1143,7 @@ async function onSettingsChanged() {
         addLinkAggregationButton();
         addMentionsButton();
         addRustlesearchButton();
+        addMovieStatusButton();
         registerInfoObserver();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();

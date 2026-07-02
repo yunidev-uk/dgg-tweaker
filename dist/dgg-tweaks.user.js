@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DGG Tweaks
 // @namespace    yuniDev.dgg-tweaks
-// @version      2.0.2
+// @version      2.0.3
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
 // @license      MIT
@@ -9,13 +9,15 @@
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
 // @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
+// @connect      movies.zeul.dev
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_xmlhttpRequest
 // @run-at       document-idle
 // ==/UserScript==
 
 (function () {
-globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
+globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-movie-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-projector%22%3E%3Cpath%20d%3D%22M5%207%203%205%22%2F%3E%3Cpath%20d%3D%22M9%206V3%22%2F%3E%3Cpath%20d%3D%22m13%207%202-2%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2213%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M11.83%2012H20a2%202%200%200%201%202%202v4a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2v-4a2%202%200%200%201%202-2h2.17%22%2F%3E%3Cpath%20d%3D%22M16%2016h2%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn {\n    position: relative;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;\n    background-size: contain;\n    opacity: 0.45;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {\n    opacity: 1;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {\n    opacity: 0.65;\n}\n\n#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 8px;\n    height: 8px;\n    border-radius: 999px;\n    background: #e74c3c;\n    pointer-events: none;\n}\n\n.dgg-tweaks-movie-tooltip {\n    text-align: center;\n    white-space: nowrap;\n}\n\n.dgg-tweaks-movie-tooltip strong {\n    display: block;\n}\n\n.dgg-tweaks-movie-tooltip span {\n    display: block;\n    font-size: 12px;\n    opacity: 0.85;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
 
 var UTIL = (() => {
 
@@ -393,6 +395,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'mentions-button', "Mentions Button", "Adds a button to the bottom of chat to view recent mentions"],
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
+            [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
             [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
@@ -420,6 +423,7 @@ let settings = {
     'mentions-button': true,
     'mentions-force-timestamps': false,
     'rustlesearch-button': true,
+    'movie-button': false,
     'collapse-combo-emotes': false
 };
 
@@ -1181,6 +1185,241 @@ function addMentionsButton() {
     });
 }
 
+// MOVIE STATUS BUTTON
+const MOVIE_STATUS_URL = 'https://movies.zeul.dev/api/status';
+const MOVIE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const MOVIE_TICK_INTERVAL_MS = 1000;
+const MOVIE_POLL_EXPIRE_MS = 5 * 60 * 1000;
+
+let movieStatus = {
+    fetchOk: false,
+    scheduleType: 'Normal',
+    sessions: [],
+    lastPoll: null
+};
+let movieFetchTimer = null;
+let movieTickTimer = null;
+
+function requestJson(url) {
+    if (typeof GM_xmlhttpRequest === 'function') {
+        return new Promise((resolve, reject) => {
+            GM_xmlhttpRequest({
+                method: 'GET',
+                url,
+                onload: response => {
+                    if (response.status < 200 || response.status >= 300) {
+                        reject(new Error(`Request failed with status ${response.status}`));
+                        return;
+                    }
+                    resolve(JSON.parse(response.responseText));
+                },
+                onerror: reject,
+                ontimeout: reject
+            });
+        });
+    }
+
+    if (typeof GM !== 'undefined' && typeof GM.xmlHttpRequest === 'function') {
+        return GM.xmlHttpRequest({ method: 'GET', url }).then(response => JSON.parse(response.responseText));
+    }
+
+    return fetch(url).then(response => {
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+        return response.json();
+    });
+}
+
+function parseMovieDate(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') {
+        const timestamp = value < 10000000000 ? value * 1000 : value;
+        const date = new Date(timestamp);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function normalizeMoviePoll(poll) {
+    if (!poll) return null;
+    if (typeof poll === 'string') return { url: poll, time: null };
+
+    const url = poll.url || poll.pollUrl || poll.link || poll.href;
+    if (!url) return null;
+
+    const time = parseMovieDate(
+        poll.time ||
+        poll.timestamp ||
+        poll.createdAt ||
+        poll.created_at ||
+        poll.detectedAt ||
+        poll.detected_at ||
+        poll.messageTimestamp ||
+        poll.date
+    );
+    return { url, time };
+}
+
+function getActiveMoviePoll() {
+    const poll = normalizeMoviePoll(movieStatus.lastPoll);
+    if (!poll) return null;
+    if (!poll.time) return poll;
+    return Date.now() - poll.time.getTime() <= MOVIE_POLL_EXPIRE_MS ? poll : null;
+}
+
+async function fetchMovieStatus() {
+    try {
+        const data = await requestJson(MOVIE_STATUS_URL);
+        movieStatus = {
+            fetchOk: true,
+            scheduleType: data.scheduleType || 'Normal',
+            sessions: (data.sessions || []).map(session => ({
+                start: parseMovieDate(session.start),
+                end: parseMovieDate(session.end)
+            })).filter(session => session.start && session.end).sort((a, b) => a.start - b.start),
+            lastPoll: data.lastPoll || null
+        };
+    } catch (error) {
+        movieStatus.fetchOk = false;
+        console.error('[dgg-tweaks] Failed to fetch movie status:', error);
+    }
+
+    updateMovieButton();
+}
+
+function getMovieScheduleStatus() {
+    const now = Date.now();
+    const activeSession = movieStatus.sessions.find(session => now >= session.start.getTime() && now < session.end.getTime());
+    if (activeSession) {
+        return {
+            state: 'live',
+            label: 'Movie Time',
+            detail: `Ends in ${formatDuration(activeSession.end.getTime() - now)}`
+        };
+    }
+
+    const nextSession = movieStatus.sessions.find(session => session.start.getTime() > now);
+    if (nextSession) {
+        const remaining = nextSession.start.getTime() - now;
+        return {
+            state: 'upcoming',
+            label: 'No Movies',
+            detail: remaining > 24 * 60 * 60 * 1000
+                ? formatMovieDate(nextSession.start)
+                : `Starts in ${formatDuration(remaining)}`
+        };
+    }
+
+    return {
+        state: 'off',
+        label: 'No Movies',
+        detail: 'No sessions scheduled'
+    };
+}
+
+function formatDuration(ms) {
+    if (ms === null || ms === undefined || ms <= 0) return '';
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+}
+
+function formatMovieDate(date) {
+    const day = date.toLocaleDateString(undefined, { weekday: 'long' });
+    const dayOfMonth = date.getDate();
+    const time = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false });
+    return `${day} ${dayOfMonth}${getDaySuffix(dayOfMonth)} ${time}`;
+}
+
+function buildMovieTooltipContent(status, poll) {
+    const label = movieStatus.scheduleType && movieStatus.scheduleType !== 'Normal'
+        ? `${status.label} (${movieStatus.scheduleType})`
+        : status.label;
+    const pollAge = poll?.time ? `Poll posted ${formatDuration(Date.now() - poll.time.getTime())} ago` : 'Poll available';
+
+    return el('div', { classes: ['dgg-tweaks-movie-tooltip'] },
+        el('strong', {}, movieStatus.fetchOk ? label : 'Connection error'),
+        movieStatus.fetchOk && status.detail && el('span', {}, status.detail),
+        poll && el('span', {}, pollAge)
+    ).build().outerHTML;
+}
+
+function updateMovieButton() {
+    const button = document.getElementById('dgg-tweaks-movie-btn');
+    if (!button) return;
+
+    const status = movieStatus.fetchOk ? getMovieScheduleStatus() : { state: 'off', label: 'Connection error', detail: '' };
+    const poll = getActiveMoviePoll();
+
+    button.classList.toggle('dgg-tweaks-movie-live', status.state === 'live');
+    button.classList.toggle('dgg-tweaks-movie-upcoming', status.state === 'upcoming');
+    button.style.cursor = poll ? 'pointer' : '';
+    button.setAttribute('aria-label', poll ? 'Open the current movie poll' : 'Movie schedule status');
+
+    let dot = button.querySelector('.dgg-tweaks-movie-dot');
+    if (poll && !dot) {
+        dot = document.createElement('span');
+        dot.className = 'dgg-tweaks-movie-dot';
+        button.appendChild(dot);
+    } else if (!poll) {
+        dot?.remove();
+    }
+
+    button._tippy?.setContent(buildMovieTooltipContent(status, poll));
+}
+
+function openMoviePoll() {
+    const poll = getActiveMoviePoll();
+    window.open(poll?.url || 'https://dinkdonk.mov/', '_blank', 'noopener');
+}
+
+function stopMovieStatusButton() {
+    clearInterval(movieFetchTimer);
+    clearInterval(movieTickTimer);
+    movieFetchTimer = null;
+    movieTickTimer = null;
+    removeChatToolButton('dgg-tweaks-movie-btn');
+}
+
+function addMovieStatusButton() {
+    if (!settings["movie-button"]) {
+        stopMovieStatusButton();
+        return;
+    }
+
+    ensureClonedChatToolButton({
+        id: 'dgg-tweaks-movie-btn',
+        anchor: document.getElementById('chat-aggregate-links-btn') ?? document.getElementById('chat-watching-focus-btn'),
+        placement: 'before',
+        onClick: openMoviePoll,
+        ariaLabel: 'Movie schedule status',
+        tippyOptions: {
+            trigger: 'mouseenter focus',
+            allowHTML: true,
+            content: '',
+            onShow: () => {
+                updateMovieButton();
+            }
+        }
+    });
+
+    updateMovieButton();
+
+    if (!movieFetchTimer) {
+        fetchMovieStatus();
+        movieFetchTimer = setInterval(fetchMovieStatus, MOVIE_REFRESH_INTERVAL_MS);
+    }
+    if (!movieTickTimer) {
+        movieTickTimer = setInterval(updateMovieButton, MOVIE_TICK_INTERVAL_MS);
+    }
+}
+
 // CINEMA MODE
 
 function cinemaModeOpenTop() {
@@ -1271,6 +1510,7 @@ async function onSettingsChanged() {
         addLinkAggregationButton();
         addMentionsButton();
         addRustlesearchButton();
+        addMovieStatusButton();
         registerInfoObserver();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();

@@ -30,7 +30,8 @@ function svgDataUrl(relativePath) {
 const iconUrls = {
     links: svgDataUrl('icons/links-icon.svg'),
     mentions: svgDataUrl('icons/mentions-icon.svg'),
-    logs: svgDataUrl('icons/logs-icon.svg')
+    logs: svgDataUrl('icons/logs-icon.svg'),
+    movie: svgDataUrl('icons/movie-icon.svg')
 };
 
 function prepareCss(relativePath) {
@@ -41,6 +42,7 @@ function prepareCss(relativePath) {
     --dgg-tweaks-links-icon: url("${iconUrls.links}");
     --dgg-tweaks-mentions-icon: url("${iconUrls.mentions}");
     --dgg-tweaks-logs-icon: url("${iconUrls.logs}");
+    --dgg-tweaks-movie-icon: url("${iconUrls.movie}");
 }
 
 ${css}`;
@@ -59,8 +61,10 @@ const metadata = `// ==UserScript==
 // @match        https://www.destiny.gg/*
 // @require      https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.js
 // @require      https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.js
+// @connect      movies.zeul.dev
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_xmlhttpRequest
 // @run-at       document-idle
 // ==/UserScript==
 `;
