@@ -4,6 +4,35 @@ input.form-control {
     padding: .3em;
 }
 
+#chat-input-wrap.dgg-tweaks-char-counter-active #chat-input-control {
+    padding-right: calc(3.75em + var(--dgg-tweaks-input-scrollbar-width, 0px));
+    padding-bottom: 1.35em;
+}
+
+.dgg-tweaks-char-counter {
+    position: absolute;
+    right: calc(0.75em + var(--dgg-tweaks-input-scrollbar-width, 0px));
+    bottom: 0.55em;
+    display: none;
+    color: #404040;
+    font-size: 0.8em;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.dgg-tweaks-char-counter.dgg-tweaks-char-counter-visible {
+    display: block;
+}
+
+.dgg-tweaks-char-counter.dgg-tweaks-char-counter-near-limit {
+    color: #b9b9b9;
+}
+
+.dgg-tweaks-char-counter.dgg-tweaks-char-counter-over-limit {
+    color: #e74c3c;
+}
+
 #dgg-tweaks-settings {
     margin-top: 1rem;
     padding-top: 1rem;

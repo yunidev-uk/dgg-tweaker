@@ -29,9 +29,10 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'mentions-force-timestamps', "Force Mentions Timestamps", "Always show timestamps for mentions"],
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
+            [INPUT_TYPES.CHECKBOX, 'character-counter', "Character Counter", "Shows remaining message characters near the chat input limit"],
             [INPUT_TYPES.CHECKBOX, 'kick-chat-bridge', "Kick Chat Messages", "Shows kick.com/destiny chat messages in DGG chat"],
             [INPUT_TYPES.CHECKBOX, 'youtube-chat-bridge', "YouTube Chat Messages", "Shows YouTube chat messages from Destiny's live stream in DGG chat"],
-            [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
+            [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge Emote Combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
             [INPUT_TYPES.SELECT, 'aggregate-links-button', "'Aggregate Links' Button", "Mode for a new 'Aggregate Links' button in chat", [['off', 'Disabled'], ['link', 'Links Only'], ['name', 'Include Usernames'], ['full', 'Full Messages']]],
@@ -59,6 +60,7 @@ let settings = {
     'mentions-force-timestamps': false,
     'rustlesearch-button': true,
     'movie-button': false,
+    'character-counter': true,
     'kick-chat-bridge': false,
     'youtube-chat-bridge': false,
     'collapse-combo-emotes': false
@@ -163,6 +165,106 @@ function updateDisabledSettings() {
         const input = document.querySelector(`[name="dgg-tweaks-${key}"]`);
         if (input) input.disabled = isSettingDisabled(key);
     }
+}
+
+// CHAT INPUT RUNE COUNTER
+
+const CHAT_MESSAGE_MAX_RUNES = 512;
+const CHAT_MESSAGE_COUNTER_MIN_RUNES = 100;
+let chatInputRuneCounterObserver = null;
+let chatInputRuneCounterInput = null;
+let chatInputRuneCounterCleanup = null;
+
+function countUtf8Runes(value) {
+    return Array.from(value).length;
+}
+
+function updateChatInputRuneCounter(input, counter) {
+    const used = countUtf8Runes(input.value);
+    const remaining = CHAT_MESSAGE_MAX_RUNES - used;
+    const visible = used > CHAT_MESSAGE_COUNTER_MIN_RUNES;
+    const wrap = input.closest('#chat-input-wrap');
+    const scrollbarWidth = Math.max(0, input.offsetWidth - input.clientWidth);
+
+    wrap?.style.setProperty('--dgg-tweaks-input-scrollbar-width', `${scrollbarWidth}px`);
+    if (counter.textContent !== String(remaining)) counter.textContent = remaining;
+    counter.classList.toggle('dgg-tweaks-char-counter-visible', visible);
+    counter.classList.toggle('dgg-tweaks-char-counter-near-limit', visible && remaining <= 100 && remaining >= 0);
+    counter.classList.toggle('dgg-tweaks-char-counter-over-limit', visible && remaining < 0);
+    wrap?.classList.toggle('dgg-tweaks-char-counter-active', visible);
+}
+
+function attachChatInputRuneCounter(input) {
+    if (!input) return;
+
+    const wrap = input.closest('#chat-input-wrap');
+    if (!wrap) return;
+
+    let counter = wrap.querySelector(':scope > .dgg-tweaks-char-counter');
+    if (input === chatInputRuneCounterInput && counter) {
+        return;
+    }
+
+    chatInputRuneCounterCleanup?.();
+    chatInputRuneCounterInput = input;
+
+    if (!counter) {
+        counter = document.createElement('div');
+        counter.className = 'dgg-tweaks-char-counter';
+        counter.setAttribute('aria-hidden', 'true');
+        input.after(counter);
+    }
+
+    const update = () => updateChatInputRuneCounter(input, counter);
+    const updateAfterDomChange = () => requestAnimationFrame(update);
+    input.addEventListener('input', update);
+    input.addEventListener('change', update);
+    input.addEventListener('paste', updateAfterDomChange);
+    input.addEventListener('drop', updateAfterDomChange);
+    const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(update) : null;
+    resizeObserver?.observe(input);
+    chatInputRuneCounterCleanup = () => {
+        resizeObserver?.disconnect();
+        input.removeEventListener('input', update);
+        input.removeEventListener('change', update);
+        input.removeEventListener('paste', updateAfterDomChange);
+        input.removeEventListener('drop', updateAfterDomChange);
+    };
+    update();
+}
+
+function registerChatInputRuneCounter() {
+    attachChatInputRuneCounter(document.getElementById('chat-input-control'));
+
+    if (chatInputRuneCounterObserver) return;
+
+    chatInputRuneCounterObserver = new MutationObserver(mutations => {
+        const inputChanged = mutations.some(mutation =>
+            Array.from(mutation.addedNodes).some(node =>
+                node.id === 'chat-input-control' ||
+                node.querySelector?.('#chat-input-control')
+            )
+        );
+        if (inputChanged) attachChatInputRuneCounter(document.getElementById('chat-input-control'));
+    });
+    chatInputRuneCounterObserver.observe(document.body, { childList: true, subtree: true });
+}
+
+function unregisterChatInputRuneCounter() {
+    chatInputRuneCounterObserver?.disconnect();
+    chatInputRuneCounterObserver = null;
+    chatInputRuneCounterCleanup?.();
+    chatInputRuneCounterCleanup = null;
+    chatInputRuneCounterInput = null;
+    document.querySelector('.dgg-tweaks-char-counter')?.remove();
+    const wrap = document.getElementById('chat-input-wrap');
+    wrap?.classList.remove('dgg-tweaks-char-counter-active');
+    wrap?.style.removeProperty('--dgg-tweaks-input-scrollbar-width');
+}
+
+function syncChatInputRuneCounter() {
+    if (settings['character-counter']) registerChatInputRuneCounter();
+    else unregisterChatInputRuneCounter();
 }
 
 // LINK AGGREGATION BUTTON
@@ -1153,6 +1255,7 @@ async function onSettingsChanged() {
         registerKickEmoteObserver(settings['kick-chat-bridge']);
         registerYoutubeEmoteObserver(settings['youtube-chat-bridge']);
         registerInfoObserver();
+        syncChatInputRuneCounter();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();
     }
