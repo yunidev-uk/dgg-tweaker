@@ -30,6 +30,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
             [INPUT_TYPES.CHECKBOX, 'kick-chat-bridge', "Kick Chat Messages", "Shows kick.com/destiny chat messages in DGG chat"],
+            [INPUT_TYPES.CHECKBOX, 'youtube-chat-bridge', "YouTube Chat Messages", "Shows YouTube chat messages from Destiny's live stream in DGG chat"],
             [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
@@ -59,6 +60,7 @@ let settings = {
     'rustlesearch-button': true,
     'movie-button': false,
     'kick-chat-bridge': false,
+    'youtube-chat-bridge': false,
     'collapse-combo-emotes': false
 };
 
@@ -1147,7 +1149,9 @@ async function onSettingsChanged() {
         addRustlesearchButton();
         addMovieStatusButton();
         syncKickChat(PAGE_TYPE === PAGE_TYPES.CHAT && settings['kick-chat-bridge']);
+        syncYoutubeChat(PAGE_TYPE === PAGE_TYPES.CHAT && settings['youtube-chat-bridge']);
         registerKickEmoteObserver(settings['kick-chat-bridge']);
+        registerYoutubeEmoteObserver(settings['youtube-chat-bridge']);
         registerInfoObserver();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();

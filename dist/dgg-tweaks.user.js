@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DGG Tweaks
 // @namespace    yuniDev.dgg-tweaks
-// @version      2.1.0
+// @version      2.2.0
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
 // @license      MIT
@@ -12,6 +12,9 @@
 // @connect      kick.com
 // @connect      movies.zeul.dev
 // @connect      web.kick.com
+// @connect      signaler-pa.youtube.com
+// @connect      www.youtube.com
+// @connect      youtube.com
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
@@ -19,7 +22,7 @@
 // ==/UserScript==
 
 (function () {
-globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-movie-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-projector%22%3E%3Cpath%20d%3D%22M5%207%203%205%22%2F%3E%3Cpath%20d%3D%22M9%206V3%22%2F%3E%3Cpath%20d%3D%22m13%207%202-2%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2213%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M11.83%2012H20a2%202%200%200%201%202%202v4a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2v-4a2%202%200%200%201%202-2h2.17%22%2F%3E%3Cpath%20d%3D%22M16%2016h2%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn {\n    position: relative;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;\n    background-size: contain;\n    opacity: 0.45;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {\n    opacity: 1;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {\n    opacity: 0.65;\n}\n\n#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 8px;\n    height: 8px;\n    border-radius: 999px;\n    background: #e74c3c;\n    pointer-events: none;\n}\n\n.dgg-tweaks-movie-tooltip {\n    text-align: center;\n    white-space: nowrap;\n}\n\n.dgg-tweaks-movie-tooltip strong {\n    display: block;\n}\n\n.dgg-tweaks-movie-tooltip span {\n    display: block;\n    font-size: 12px;\n    opacity: 0.85;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n.msg-chat.dgg-tweaks-kick .user::before {\n    content: \"\";\n    display: inline-block;\n    width: 0.95em;\n    height: 0.95em;\n    margin-right: 0.3em;\n    background: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath d='M37 .036h164.448v113.621h54.71v-56.82h54.731V.036h164.448v170.777h-54.73v56.82h-54.711v56.8h54.71v56.82h54.73V512.03H310.89v-56.82h-54.73v-56.8h-54.711v113.62H37V.036z' fill='%2353fc18'/%3E%3C/svg%3E\") no-repeat center center;\n    background-size: contain;\n    vertical-align: -0.12em;\n}\n\n.msg-chat.dgg-tweaks-kick .dgg-tweaks-kick-emote {\n    display: inline-block;\n    width: auto;\n    height: 1.8em;\n    max-width: 8em;\n    margin: -0.35em 0.08em;\n    object-fit: contain;\n    vertical-align: middle;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
+globalThis.DGG_TWEAKS_CSS = {"css/base.css":":root {\n    --dgg-tweaks-links-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-link%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207.54.54l3-3a5%205%200%200%200-7.07-7.07l-1.72%201.71%22%2F%3E%3Cpath%20d%3D%22M14%2011a5%205%200%200%200-7.54-.54l-3%203a5%205%200%200%200%207.07%207.07l1.71-1.71%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-mentions-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-at-sign%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%224%22%2F%3E%3Cpath%20d%3D%22M16%208v5a3%203%200%200%200%206%200v-1a10%2010%200%201%200-4%208%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-logs-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-logs%22%3E%3Cpath%20d%3D%22M3%205h1%22%2F%3E%3Cpath%20d%3D%22M3%2012h1%22%2F%3E%3Cpath%20d%3D%22M3%2019h1%22%2F%3E%3Cpath%20d%3D%22M8%205h1%22%2F%3E%3Cpath%20d%3D%22M8%2012h1%22%2F%3E%3Cpath%20d%3D%22M8%2019h1%22%2F%3E%3Cpath%20d%3D%22M13%205h8%22%2F%3E%3Cpath%20d%3D%22M13%2012h8%22%2F%3E%3Cpath%20d%3D%22M13%2019h8%22%2F%3E%3C%2Fsvg%3E\");\n    --dgg-tweaks-movie-icon: url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20class%3D%22lucide%20lucide-projector%22%3E%3Cpath%20d%3D%22M5%207%203%205%22%2F%3E%3Cpath%20d%3D%22M9%206V3%22%2F%3E%3Cpath%20d%3D%22m13%207%202-2%22%2F%3E%3Ccircle%20cx%3D%229%22%20cy%3D%2213%22%20r%3D%223%22%2F%3E%3Cpath%20d%3D%22M11.83%2012H20a2%202%200%200%201%202%202v4a2%202%200%200%201-2%202H4a2%202%200%200%201-2-2v-4a2%202%200%200%201%202-2h2.17%22%2F%3E%3Cpath%20d%3D%22M16%2016h2%22%2F%3E%3C%2Fsvg%3E\");\n}\n\ninput.form-control {\n    margin-left: 0.5em;\n    border-radius: .25em;\n    padding: .3em;\n}\n\n#dgg-tweaks-settings {\n    margin-top: 1rem;\n    padding-top: 1rem;\n    border-top: 1px solid rgba(255, 255, 255, 0.1);\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-title {\n    margin: 0 0 0.45rem;\n    padding: 0 0 0 0.6em;\n    font-size: 1.35rem;\n    font-weight: 700;\n    line-height: 1.2;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section {\n    margin-top: 1rem;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-section:first-of-type {\n    margin-top: 0;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-settings-heading {\n    font-size: .9em;\n    margin-top: 1.8em;\n    margin-bottom: .9em;\n    padding-left: .9em;\n    color: #494949;\n    text-transform: uppercase;\n    font-weight: 600;\n}\n\n#dgg-tweaks-settings .dgg-tweaks-setting:has(input:disabled) {\n    opacity: 0.55;\n}\n\n#chat-tools-wrap #chat-aggregate-links-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-links-icon) no-repeat center center;\n    background-size: contain;\n}\n\n.dgg-tweaks-aggregate-links {\n    display: flex;\n    flex-direction: column;\n}\n\n#chat-tools-wrap #dgg-tweaks-mentions-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-mentions-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-rustlesearch-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-logs-icon) no-repeat center center;\n    background-size: contain;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn {\n    position: relative;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn .btn-icon.btn-icon {\n    background: rgba(0,0,0,0) var(--dgg-tweaks-movie-icon) no-repeat center center;\n    background-size: contain;\n    opacity: 0.45;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-live .btn-icon.btn-icon {\n    opacity: 1;\n}\n\n#chat-tools-wrap #dgg-tweaks-movie-btn.dgg-tweaks-movie-upcoming .btn-icon.btn-icon {\n    opacity: 0.65;\n}\n\n#dgg-tweaks-movie-btn .dgg-tweaks-movie-dot {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 8px;\n    height: 8px;\n    border-radius: 999px;\n    background: #e74c3c;\n    pointer-events: none;\n}\n\n.dgg-tweaks-movie-tooltip {\n    text-align: center;\n    white-space: nowrap;\n}\n\n.dgg-tweaks-movie-tooltip strong {\n    display: block;\n}\n\n.dgg-tweaks-movie-tooltip span {\n    display: block;\n    font-size: 12px;\n    opacity: 0.85;\n}\n\n.dgg-tweaks-mentions-popup {\n    background: #080808;\n    padding: 8px 0px;\n}\n\ndiv.tippy-content:has(> .dgg-tweaks-mentions-popup) {\n    padding: 1px;\n    border-radius: 6px;\n    overflow: hidden;\n}\n\n#dgg-tweaks-mentions-button.dgg-tweaks-setting:has(input:not(:checked)) ~ #dgg-tweaks-mentions-force-timestamps.dgg-tweaks-setting {\n    display: none !important;\n}\n\n.msg-chat.dgg-tweaks-kick .user::before {\n    content: \"\";\n    display: inline-block;\n    width: 0.95em;\n    height: 0.95em;\n    margin-right: 0.3em;\n    background: url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg' fill-rule='evenodd' clip-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2'%3E%3Cpath d='M37 .036h164.448v113.621h54.71v-56.82h54.731V.036h164.448v170.777h-54.73v56.82h-54.711v56.8h54.71v56.82h54.73V512.03H310.89v-56.82h-54.73v-56.8h-54.711v113.62H37V.036z' fill='%2353fc18'/%3E%3C/svg%3E\") no-repeat center center;\n    background-size: contain;\n    vertical-align: -0.12em;\n}\n\n.msg-chat.dgg-tweaks-kick .dgg-tweaks-kick-emote {\n    display: inline-block;\n    width: auto;\n    height: 1.8em;\n    max-width: 8em;\n    margin: -0.35em 0.08em;\n    object-fit: contain;\n    vertical-align: middle;\n}\n\n.msg-chat.dgg-tweaks-youtube .user::before {\n    content: \"\";\n    display: inline-block;\n    width: 1.1em;\n    height: 0.78em;\n    margin-right: 0.3em;\n    background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28.57 20' preserveAspectRatio='xMidYMid meet'%3E%3Cg%3E%3Cpath d='M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5677 5.35042 27.9727 3.12324Z' fill='%23FF0000'/%3E%3Cpath d='M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z' fill='white'/%3E%3C/g%3E%3C/svg%3E\") no-repeat center center;\n    background-size: contain;\n    vertical-align: -0.08em;\n}\n\n.msg-chat.dgg-tweaks-youtube .dgg-tweaks-youtube-emote {\n    display: inline-block;\n    width: auto;\n    height: 1.8em;\n    max-width: 8em;\n    margin: -0.35em 0.08em;\n    object-fit: contain;\n    vertical-align: middle;\n}\n\n\n#dgg-tweaks-menubar-hover {\n    position: absolute;\n    top: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode {\n    z-index: 25;\n    transition: transform 0.125s;\n    background-color: #111113;\n    transform: translateY(-100%);\n}\n.bigscreen .stream-panel--theater .header.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0%);\n}\n\n\n#dgg-tweaks-controls-hover {\n    position: absolute;\n    bottom: 0%;\n    left: 0%;\n    right: 0%;\n    height: 64px;\n}\n\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n    display: flex;\n    position: absolute;\n    bottom: 0px;\n    padding: 2em;\n    padding-top: 0;\n    transform: translateY(calc(100%));\n    transition: transform 0.125s;\n}\n.bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode.active {\n    transform: translateY(0px);\n}\n\n@media (orientation: portrait), (max-width: 40rem) {\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        transform: translateY(0px);\n        transition: none;\n    }\n    .bigscreen .stream-panel--theater #stream-controls.dgg-tweaks-show-in-cinema-mode {\n        background-color: #111113;\n        position: inherit;\n        flex-direction: row;\n        justify-content: space-between;\n        padding: 1rem;\n        display: flex;\n        gap: 1rem;\n        z-index: 3;\n        width: 100%;\n    }\n}\n","css/link-size.css":".msg-chat .text a.externallink {\n    position: relative;\n}\n\n.msg-chat .text a.externallink.dgg-tweaks-expanded-link-hover {\n    color: #08c;\n    text-decoration: underline;\n}\n\n#dgg-tweaks-link-hitboxes {\n    position: fixed;\n    inset: 0;\n    pointer-events: none;\n    z-index: 2147483647;\n    overflow: hidden;\n    contain: layout size style;\n}\n\n.dgg-tweaks-link-hitbox {\n    position: absolute;\n    display: block;\n    pointer-events: none;\n    background: rgba(0,0,0,0);\n}\n\nbody.dgg-tweaks-expanded-link-hover {\n    cursor: pointer;\n}\n","css/link-size-debug.css":".dgg-tweaks-link-hitbox {\n    box-shadow: 0 0 0 1px #0090ff;\n}\n","css/resize-user-info.css":"#chat-user-info {\n    height: 300px;\n    max-width: none;\n}\n\n#chat-user-info .stalk.stalk {\n    min-height: 0px;\n    height: revert;\n    flex-grow: 1;\n}\n\n.chat-menu-inner.floating-window.floating-window {\n    height: 100% !important;\n}\n\n.user-info {\n    min-height: 0px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n}\n\n.resize-vertical {\n    width: calc(100% - 4px);\n    height: 8px;\n    position: absolute;\n    left: 0px;  \n    bottom: -4px;\n    cursor: ns-resize;\n}\n\n.resize-horizontal {\n    width: 8px;\n    height: calc(100% - 4px);\n    position: absolute;\n    top: 0px;\n    right: -4px;\n    cursor: ew-resize;\n}\n\n.resize-diagonal {\n    width: 12px;\n    height: 12px;\n    position: absolute;\n    bottom: -4px;\n    right: -4px;\n    cursor: nwse-resize;\n}","css/dgg-layout-fix.css":"body .navbar.navbar {\n    padding: .5rem 0;\n    gap: 1rem;\n}\nbody .navbar__item.navbar__item {\n    padding: 0 .5rem;\n}\nbody .navbar__items.navbar__socials.navbar__socials {\n  gap: 0;\n}\nbody .navbar__items.navbar__socials .navbar__icon.navbar__icon {\n  height: 1.5rem;\n}\n\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"live\"]) #close-embed-btn#close-embed-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"host\"]) #close-embed-btn#close-embed-btn {\n  display: none;\n}\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"embed\"]) #change-platform-btn#change-platform-btn,\nheader:has(~ #stream-wrap .stream-controls[data-embed-type=\"offline\"]) #change-platform-btn#change-platform-btn {\n  display: none;\n}\n\nbody .button.button {\n  padding: 0 .4rem;\n  height: 2rem;\n  align-self: center;\n}\n\nbody #stream-wrap#stream-wrap {\n  padding: 0;\n}\nbody #stream-controls#stream-controls {\n  gap: 0;\n  padding: 0 .5rem;\n}\nbody #stream-controls .stream-controls__group.stream-controls__group {\n  gap: 0;\n}\nbody #control-buttons#control-buttons {\n  min-width: fit-content; /* prevent vertical stacking */\n}\nbody .navbar__logo.navbar__logo {\n  min-width: fit-content; /* prevent horizontal squishing */\n}\nbody .stream-controls__group.stream-controls__group {\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  padding-bottom: 3px;\n}\nbody .control-badges.control-badges {\n  align-content: center;\n}\n@media (orientation: portrait), (max-width: 40rem) {\n  body .stream-panel .control-buttons.control-buttons {\n    flex-direction: row;\n    align-self: center;\n  }\n  body .stream-panel .stream-controls.stream-controls {\n    padding: 0;\n    flex-direction: column;\n  }\n}\n\n@container (width < 930px) {\n  body .control-buttons .button.button span {\n    display: none;\n  }\n  body .navbar__items .button.button span {\n    display: none;\n  }\n}\n@container (width < 1050px) {\n  body .navbar__socials.navbar__socials {\n    display: none;\n  }\n}"};
 
 const DGG_TWEAKS_DGG_FRAME_EVENT = 'dgg-tweaks:inject-dgg-frame';
 
@@ -204,6 +207,224 @@ function fromHTMLString(htmlString) {
     container.remove();
     return nodes;
 }
+
+
+const CHAT_BRIDGE_UTILS = (() => {
+    function requestJson({ url, method = 'GET', body = null, headers = {} }) {
+        return new Promise((resolve, reject) => {
+            if (typeof GM_xmlhttpRequest !== 'function') {
+                fetch(url, {
+                    method,
+                    body: serializeBody(body),
+                    headers: {
+                        ...(body === null ? {} : { 'Content-Type': 'application/json' }),
+                        ...headers
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.json();
+                    })
+                    .then(resolve, reject);
+                return;
+            }
+
+            GM_xmlhttpRequest({
+                method,
+                url,
+                data: serializeBody(body),
+                responseType: 'json',
+                headers: {
+                    ...(body === null ? {} : { 'Content-Type': 'application/json' }),
+                    ...headers
+                },
+                onload: response => {
+                    if (response.status < 200 || response.status >= 300) {
+                        reject(new Error(`HTTP ${response.status}`));
+                        return;
+                    }
+
+                    if (response.response) {
+                        resolve(response.response);
+                        return;
+                    }
+
+                    try {
+                        resolve(JSON.parse(response.responseText));
+                    } catch (error) {
+                        reject(error);
+                    }
+                },
+                onerror: reject,
+                ontimeout: () => reject(new Error('Request timed out'))
+            });
+        });
+    }
+
+    function serializeBody(body) {
+        if (body === null || body === undefined || typeof body === 'string') return body;
+        return JSON.stringify(body);
+    }
+
+    function requestText({ url, method = 'GET', body = null, headers = {} }) {
+        return new Promise((resolve, reject) => {
+            if (typeof GM_xmlhttpRequest !== 'function') {
+                fetch(url, { method, body: serializeBody(body), headers })
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.text();
+                    })
+                    .then(resolve, reject);
+                return;
+            }
+
+            GM_xmlhttpRequest({
+                method,
+                url,
+                data: serializeBody(body),
+                headers,
+                onload: response => {
+                    if (response.status < 200 || response.status >= 300) {
+                        reject(new Error(`HTTP ${response.status}`));
+                        return;
+                    }
+                    resolve(response.responseText);
+                },
+                onerror: reject,
+                ontimeout: () => reject(new Error('Request timed out'))
+            });
+        });
+    }
+
+    function streamText({ url, headers = {}, onChunk, onDone, onError }) {
+        if (typeof GM_xmlhttpRequest !== 'function') {
+            const controller = new AbortController();
+            fetch(url, { headers, signal: controller.signal })
+                .then(async response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+                        onChunk(decoder.decode(value, { stream: true }));
+                    }
+                    onDone?.();
+                })
+                .catch(error => {
+                    if (error.name !== 'AbortError') onError?.(error);
+                });
+            return () => controller.abort();
+        }
+
+        let seenLength = 0;
+        const request = GM_xmlhttpRequest({
+            method: 'GET',
+            url,
+            headers,
+            onprogress: response => {
+                const text = response.responseText || '';
+                if (text.length <= seenLength) return;
+                onChunk(text.slice(seenLength));
+                seenLength = text.length;
+            },
+            onload: response => {
+                const text = response.responseText || '';
+                if (text.length > seenLength) onChunk(text.slice(seenLength));
+                onDone?.();
+            },
+            onerror: error => onError?.(error),
+            ontimeout: () => onError?.(new Error('Request timed out'))
+        });
+
+        return () => request.abort?.();
+    }
+
+    function createSeenTracker(maxSize) {
+        const ids = new Set();
+        const queue = [];
+
+        return {
+            hasSeen(id) {
+                if (!id) return false;
+                if (ids.has(id)) return true;
+
+                ids.add(id);
+                queue.push(id);
+
+                while (queue.length > maxSize) {
+                    const removed = queue.shift();
+                    ids.delete(removed);
+                }
+
+                return false;
+            },
+            clear() {
+                ids.clear();
+                queue.length = 0;
+            }
+        };
+    }
+
+    function sanitizeNick(rawName) {
+        const sanitized = String(rawName || 'user').replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+        return (sanitized || 'user').slice(0, 32);
+    }
+
+    function injectDggMessage({ id, nick, featureClass, data, timestamp }) {
+        if (!String(data ?? '').trim()) return;
+
+        const payload = {
+            id,
+            nick,
+            features: [featureClass],
+            roles: [],
+            createdDate: '',
+            data,
+            timestamp: timestamp || new Date().toISOString()
+        };
+
+        document.dispatchEvent(new CustomEvent(DGG_TWEAKS_DGG_FRAME_EVENT, {
+            detail: `MSG ${JSON.stringify(payload)}`
+        }));
+    }
+
+    function replaceTextTokens(textNode, tokenRegex, renderMatch) {
+        const text = textNode.textContent;
+        if (!tokenRegex.test(text)) return false;
+
+        tokenRegex.lastIndex = 0;
+        const fragment = document.createDocumentFragment();
+        let lastIndex = 0;
+        let match;
+
+        while ((match = tokenRegex.exec(text)) !== null) {
+            if (match.index > lastIndex) {
+                fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+            }
+
+            fragment.appendChild(renderMatch(match));
+            lastIndex = tokenRegex.lastIndex;
+        }
+
+        if (lastIndex < text.length) {
+            fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+        }
+
+        textNode.replaceWith(fragment);
+        return true;
+    }
+
+    return {
+        createSeenTracker,
+        injectDggMessage,
+        replaceTextTokens,
+        requestJson,
+        requestText,
+        streamText,
+        sanitizeNick
+    };
+})();
 
 
 const REGEXES = (() => {
@@ -448,53 +669,13 @@ const kickChatState = {
     enabled: false,
     starting: false,
     pollTimer: null,
-    seenIds: new Set(),
-    seenQueue: [],
+    seen: CHAT_BRIDGE_UTILS.createSeenTracker(KICK_CHAT_CONFIG.maxSeenMessages),
     channelId: null
 };
 
-function gmJsonRequest(url) {
-    return new Promise((resolve, reject) => {
-        if (typeof GM_xmlhttpRequest !== 'function') {
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    return response.json();
-                })
-                .then(resolve, reject);
-            return;
-        }
-
-        GM_xmlhttpRequest({
-            method: 'GET',
-            url,
-            responseType: 'json',
-            onload: response => {
-                if (response.status < 200 || response.status >= 300) {
-                    reject(new Error(`HTTP ${response.status}`));
-                    return;
-                }
-
-                if (response.response) {
-                    resolve(response.response);
-                    return;
-                }
-
-                try {
-                    resolve(JSON.parse(response.responseText));
-                } catch (error) {
-                    reject(error);
-                }
-            },
-            onerror: reject,
-            ontimeout: () => reject(new Error('Request timed out'))
-        });
-    });
-}
-
 async function discoverKickChannelId() {
     try {
-        const data = await gmJsonRequest(`https://kick.com/api/v2/channels/${KICK_CHAT_CONFIG.channelSlug}`);
+        const data = await CHAT_BRIDGE_UTILS.requestJson({ url: `https://kick.com/api/v2/channels/${KICK_CHAT_CONFIG.channelSlug}` });
         const channelId = Number(data?.id);
         if (Number.isFinite(channelId) && channelId > 0) return channelId;
     } catch (error) {
@@ -535,29 +716,7 @@ function renderKickEmoteNode(id, name) {
 
 function renderKickEmotesInTextNode(textNode) {
     const tokenRegex = /\[emote:(\d+):([^\]]+)\]/g;
-    const text = textNode.textContent;
-    if (!tokenRegex.test(text)) return false;
-
-    tokenRegex.lastIndex = 0;
-    const fragment = document.createDocumentFragment();
-    let lastIndex = 0;
-    let match;
-
-    while ((match = tokenRegex.exec(text)) !== null) {
-        if (match.index > lastIndex) {
-            fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-        }
-
-        fragment.appendChild(renderKickEmoteNode(match[1], match[2]));
-        lastIndex = tokenRegex.lastIndex;
-    }
-
-    if (lastIndex < text.length) {
-        fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
-    }
-
-    textNode.replaceWith(fragment);
-    return true;
+    return CHAT_BRIDGE_UTILS.replaceTextTokens(textNode, tokenRegex, match => renderKickEmoteNode(match[1], match[2]));
 }
 
 function renderKickEmotesInMessage(messageEl) {
@@ -628,23 +787,7 @@ function registerKickEmoteObserver(enabled) {
 
 function syntheticKickNick(sender) {
     const rawName = sender?.username || sender?.slug || `user_${sender?.id || 'unknown'}`;
-    const sanitized = String(rawName).replace(/[^a-zA-Z0-9_]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
-    return (sanitized || 'user').slice(0, 32);
-}
-
-function hasSeenKickMessage(id) {
-    if (!id) return false;
-    if (kickChatState.seenIds.has(id)) return true;
-
-    kickChatState.seenIds.add(id);
-    kickChatState.seenQueue.push(id);
-
-    while (kickChatState.seenQueue.length > KICK_CHAT_CONFIG.maxSeenMessages) {
-        const removed = kickChatState.seenQueue.shift();
-        kickChatState.seenIds.delete(removed);
-    }
-
-    return false;
+    return CHAT_BRIDGE_UTILS.sanitizeNick(rawName);
 }
 
 function injectSyntheticDggMessage(kickMessage) {
@@ -653,19 +796,13 @@ function injectSyntheticDggMessage(kickMessage) {
 
     const sender = kickMessage.sender || {};
     const nick = syntheticKickNick(sender);
-    const payload = {
+    CHAT_BRIDGE_UTILS.injectDggMessage({
         id: `kick:${sender.id || sender.slug || nick}`,
         nick,
-        features: [KICK_CHAT_CONFIG.featureClass],
-        roles: [],
-        createdDate: '',
+        featureClass: KICK_CHAT_CONFIG.featureClass,
         data: text,
         timestamp: kickMessage.created_at || new Date().toISOString()
-    };
-
-    document.dispatchEvent(new CustomEvent(DGG_TWEAKS_DGG_FRAME_EVENT, {
-        detail: `MSG ${JSON.stringify(payload)}`
-    }));
+    });
 }
 
 function extractKickHistoryMessages(data) {
@@ -688,12 +825,12 @@ async function pollKickChatHistory({ primeOnly = false } = {}) {
     if (!kickChatState.enabled || !kickChatState.channelId) return;
 
     try {
-        const data = await gmJsonRequest(`https://web.kick.com/api/v1/chat/${kickChatState.channelId}/history`);
+        const data = await CHAT_BRIDGE_UTILS.requestJson({ url: `https://web.kick.com/api/v1/chat/${kickChatState.channelId}/history` });
         const messages = sortKickMessages(extractKickHistoryMessages(data));
 
         for (const message of messages) {
             if (message?.type !== 'message') continue;
-            if (hasSeenKickMessage(message.id)) continue;
+            if (kickChatState.seen.hasSeen(message.id)) continue;
             if (!primeOnly) injectSyntheticDggMessage(message);
         }
     } catch (error) {
@@ -751,6 +888,681 @@ function syncKickChat(enabled) {
 }
 
 
+const YOUTUBE_CHAT_CONFIG = {
+    liveUrl: 'https://www.youtube.com/@Destiny/live',
+    featureClass: 'dgg-tweaks-youtube',
+    maxSeenMessages: 1000,
+    fallbackPollIntervalMs: 3000,
+    liveRetryIntervalMs: 60000,
+    signalerReconnectDelayMs: 1000,
+    invalidationTimeoutMs: 10000
+};
+
+const youtubeChatState = {
+    enabled: false,
+    starting: false,
+    fetching: false,
+    pollTimer: null,
+    liveRetryTimer: null,
+    seen: CHAT_BRIDGE_UTILS.createSeenTracker(YOUTUBE_CHAT_CONFIG.maxSeenMessages),
+    apiKey: null,
+    signalerApiKey: null,
+    context: null,
+    continuation: null,
+    videoId: null,
+    continuationMode: null,
+    gsessionId: null,
+    sid: null,
+    session: null,
+    signalerUnavailable: false,
+    signalerAbort: null,
+    signalerBuffer: '',
+    lastSignalerActivity: 0,
+    invalidationTimeoutTimer: null,
+    consecutivePollFailures: 0,
+    emotes: new Map()
+};
+
+const YOUTUBE_SIGNALER_PATTERNS = {
+    firstChat: /\[\[\d+,\[\[null,null,\["([^"]+)"\]\]\]\]/,
+    noChat: /\[\[\d*,\[\[\[\[.*\[null,null,\["\d*/,
+    chatTimestamp: /\d{16,}/,
+    session: /\w{8,}/
+};
+
+function extractBalancedJson(text, startIndex) {
+    const opener = text[startIndex];
+    const closer = opener === '{' ? '}' : ']';
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+
+    for (let i = startIndex; i < text.length; i += 1) {
+        const char = text[i];
+
+        if (inString) {
+            if (escaped) escaped = false;
+            else if (char === '\\') escaped = true;
+            else if (char === '"') inString = false;
+            continue;
+        }
+
+        if (char === '"') {
+            inString = true;
+            continue;
+        }
+
+        if (char === opener) depth += 1;
+        else if (char === closer) {
+            depth -= 1;
+            if (depth === 0) return text.slice(startIndex, i + 1);
+        }
+    }
+
+    return null;
+}
+
+function extractJsonAfter(text, marker, fromIndex = 0) {
+    const markerIndex = text.indexOf(marker, fromIndex);
+    if (markerIndex === -1) return null;
+
+    const objectStart = text.slice(markerIndex + marker.length).search(/[\[{]/);
+    if (objectStart === -1) return null;
+
+    const startIndex = markerIndex + marker.length + objectStart;
+    const json = extractBalancedJson(text, startIndex);
+    return json ? JSON.parse(json) : null;
+}
+
+function extractYtcfg(text) {
+    let index = 0;
+
+    while ((index = text.indexOf('ytcfg.set(', index)) !== -1) {
+        try {
+            const config = extractJsonAfter(text, 'ytcfg.set(', index);
+            if (config?.INNERTUBE_API_KEY && config?.INNERTUBE_CONTEXT) return config;
+        } catch { }
+        index += 'ytcfg.set('.length;
+    }
+
+    return null;
+}
+
+function findNestedContinuation(value) {
+    if (!value || typeof value !== 'object') return null;
+
+    if (Array.isArray(value)) {
+        for (const item of value) {
+            const continuation = findNestedContinuation(item);
+            if (continuation) return continuation;
+        }
+        return null;
+    }
+
+    for (const key of ['reloadContinuationData', 'timedContinuationData', 'invalidationContinuationData']) {
+        const continuation = value[key]?.continuation;
+        if (continuation) return continuation;
+    }
+
+    for (const child of Object.values(value)) {
+        const continuation = findNestedContinuation(child);
+        if (continuation) return continuation;
+    }
+
+    return null;
+}
+
+function findNestedVideoId(value) {
+    if (!value || typeof value !== 'object') return null;
+
+    if (Array.isArray(value)) {
+        for (const item of value) {
+            const videoId = findNestedVideoId(item);
+            if (videoId) return videoId;
+        }
+        return null;
+    }
+
+    const videoId = value.watchEndpoint?.videoId || value.currentVideoEndpoint?.watchEndpoint?.videoId;
+    if (videoId) return videoId;
+
+    for (const child of Object.values(value)) {
+        const foundVideoId = findNestedVideoId(child);
+        if (foundVideoId) return foundVideoId;
+    }
+
+    return null;
+}
+
+function getNextContinuation(liveChatContinuation) {
+    return findNestedContinuation(liveChatContinuation?.continuations);
+}
+
+function getContinuationData(liveChatContinuation) {
+    const continuations = liveChatContinuation?.continuations || [];
+    for (const continuation of continuations) {
+        if (continuation.timedContinuationData) {
+            return { mode: 'timed', data: continuation.timedContinuationData };
+        }
+        if (continuation.invalidationContinuationData) {
+            return { mode: 'invalidation', data: continuation.invalidationContinuationData };
+        }
+        if (continuation.reloadContinuationData) {
+            return { mode: 'timed', data: continuation.reloadContinuationData };
+        }
+    }
+    return null;
+}
+
+function getNextPollInterval(liveChatContinuation) {
+    const continuation = getContinuationData(liveChatContinuation);
+    const timeoutMs = Number(continuation?.data?.timeoutMs);
+    if (Number.isFinite(timeoutMs) && timeoutMs > 0) return timeoutMs;
+    return YOUTUBE_CHAT_CONFIG.fallbackPollIntervalMs;
+}
+
+async function discoverYoutubeLiveChat() {
+    const html = await CHAT_BRIDGE_UTILS.requestText({ url: YOUTUBE_CHAT_CONFIG.liveUrl });
+    const ytcfg = extractYtcfg(html) || {};
+    const initialData = extractJsonAfter(html, 'var ytInitialData = ') || extractJsonAfter(html, 'ytInitialData = ');
+    const continuation = findNestedContinuation(initialData);
+    const videoId = findNestedVideoId(initialData);
+    const apiKey = ytcfg.INNERTUBE_API_KEY;
+    const signalerApiKey = ytcfg.LIVE_CHAT_BASE_TANGO_CONFIG?.apiKey;
+    const context = ytcfg.INNERTUBE_CONTEXT;
+
+    if (!apiKey || !context || !continuation) {
+        throw new Error('YouTube live chat metadata not found.');
+    }
+
+    return { apiKey, signalerApiKey, context, continuation, videoId };
+}
+
+function youtubeRequestBody({ timestamp = '', isTimeout = false, isFirst = true } = {}) {
+    const body = {
+        context: youtubeChatState.context,
+        continuation: youtubeChatState.continuation,
+        webClientInfo: { IsDocumentHidden: false }
+    };
+
+    if (isTimeout) body.isInvalidationTimeoutRequest = true;
+    else if (!isFirst && timestamp) body.invalidationPayloadLastPublishAtUsec = timestamp;
+
+    return body;
+}
+
+function youtubeLiveChatUrl() {
+    return `https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?prettyPrint=false&key=${encodeURIComponent(youtubeChatState.apiKey)}`;
+}
+
+function youtubeSignalerHeaders(contentType) {
+    return {
+        'Content-Type': contentType,
+        'X-WebChannel-Content-Type': 'application/json+protobuf',
+        'Referer': 'https://www.youtube.com/',
+        'Origin': 'https://www.youtube.com'
+    };
+}
+
+function randomZx() {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+async function chooseYoutubeSignalerServer() {
+    if (!youtubeChatState.signalerApiKey || !youtubeChatState.videoId) {
+        throw new Error('YouTube signaler metadata not available.');
+    }
+
+    const body = `[[null,null,null,[9,5],null,[["youtube_live_chat_web"],[1],[[["chat~${youtubeChatState.videoId}"]]]]],null,null,0]`;
+    const response = await CHAT_BRIDGE_UTILS.requestJson({
+        method: 'POST',
+        url: `https://signaler-pa.youtube.com/punctual/v1/chooseServer?key=${encodeURIComponent(youtubeChatState.signalerApiKey)}`,
+        body,
+        headers: youtubeSignalerHeaders('application/json+protobuf')
+    });
+
+    const gsessionId = Array.isArray(response) ? response[0] : null;
+    if (!gsessionId || typeof gsessionId !== 'string') throw new Error('YouTube signaler gsessionid not found.');
+    youtubeChatState.gsessionId = gsessionId;
+}
+
+function extractSidFromResponse(text) {
+    const start = text.indexOf('[[');
+    if (start === -1) return null;
+
+    let parsed;
+    try {
+        parsed = JSON.parse(text.slice(start));
+    } catch {
+        return null;
+    }
+
+    for (const item of parsed) {
+        const sid = item?.[1]?.[1];
+        if (typeof sid === 'string') return sid;
+    }
+    return null;
+}
+
+async function getYoutubeSignalerSid() {
+    const body = `count=1&ofs=0&req0___data__=${encodeURIComponent(`[[["1",[null,null,null,[9,5],null,[["youtube_live_chat_web"],[1],[[["chat~${youtubeChatState.videoId}"]]]],null,null,1],null,3]]]`)}`;
+    const text = await CHAT_BRIDGE_UTILS.requestText({
+        method: 'POST',
+        url: `https://signaler-pa.youtube.com/punctual/multi-watch/channel?VER=8&gsessionid=${encodeURIComponent(youtubeChatState.gsessionId)}&key=${encodeURIComponent(youtubeChatState.signalerApiKey)}&RID=6167&CVER=22&zx=${randomZx()}&t=1`,
+        body,
+        headers: youtubeSignalerHeaders('application/x-www-form-urlencoded')
+    });
+
+    const sid = extractSidFromResponse(text);
+    if (!sid) throw new Error('YouTube signaler SID not found.');
+    youtubeChatState.sid = sid;
+}
+
+async function setupYoutubeSignaler() {
+    await chooseYoutubeSignalerServer();
+    await getYoutubeSignalerSid();
+}
+
+function stopYoutubeSignaler() {
+    youtubeChatState.signalerAbort?.();
+    youtubeChatState.signalerAbort = null;
+    youtubeChatState.signalerBuffer = '';
+    clearTimeout(youtubeChatState.invalidationTimeoutTimer);
+    youtubeChatState.invalidationTimeoutTimer = null;
+}
+
+function scheduleInvalidationTimeoutFetch() {
+    clearTimeout(youtubeChatState.invalidationTimeoutTimer);
+    if (!youtubeChatState.enabled || youtubeChatState.continuationMode !== 'invalidation') return;
+
+    youtubeChatState.invalidationTimeoutTimer = setTimeout(() => {
+        fetchYoutubeChat({ isTimeout: true });
+    }, YOUTUBE_CHAT_CONFIG.invalidationTimeoutMs);
+}
+
+function extractYoutubeSession(line) {
+    const match = line.match(YOUTUBE_SIGNALER_PATTERNS.session);
+    if (match) youtubeChatState.session = match[0];
+}
+
+function handleYoutubeSignalerLine(line) {
+    const trimmed = line.trim();
+    if (trimmed.length < 10) return;
+
+    youtubeChatState.lastSignalerActivity = Date.now();
+
+    if (YOUTUBE_SIGNALER_PATTERNS.firstChat.test(trimmed)) {
+        extractYoutubeSession(trimmed);
+        fetchYoutubeChat({ isFirst: true });
+        return;
+    }
+
+    if (YOUTUBE_SIGNALER_PATTERNS.noChat.test(trimmed)) return;
+
+    const timestamp = trimmed.match(YOUTUBE_SIGNALER_PATTERNS.chatTimestamp)?.[0];
+    if (timestamp) {
+        fetchYoutubeChat({ timestamp, isFirst: false });
+        return;
+    }
+}
+
+function consumeYoutubeSignalerChunk(chunk) {
+    youtubeChatState.signalerBuffer += chunk;
+    const lines = youtubeChatState.signalerBuffer.split('\n');
+    youtubeChatState.signalerBuffer = lines.pop() || '';
+    for (const line of lines) handleYoutubeSignalerLine(line);
+}
+
+function startYoutubeSignalerStream() {
+    if (!youtubeChatState.enabled || youtubeChatState.signalerAbort || !youtubeChatState.gsessionId || !youtubeChatState.sid) return;
+
+    const url = `https://signaler-pa.youtube.com/punctual/multi-watch/channel?VER=8&gsessionid=${encodeURIComponent(youtubeChatState.gsessionId)}&key=${encodeURIComponent(youtubeChatState.signalerApiKey)}&RID=rpc&SID=${encodeURIComponent(youtubeChatState.sid)}&AID=0&CI=0&TYPE=xmlhttp&zx=${randomZx()}&t=1`;
+    youtubeChatState.signalerAbort = CHAT_BRIDGE_UTILS.streamText({
+        url,
+        headers: youtubeSignalerHeaders('application/json+protobuf'),
+        onChunk: consumeYoutubeSignalerChunk,
+        onDone: () => {
+            youtubeChatState.signalerAbort = null;
+            if (youtubeChatState.enabled && youtubeChatState.continuationMode === 'invalidation') {
+                setTimeout(startYoutubeInvalidationMode, YOUTUBE_CHAT_CONFIG.signalerReconnectDelayMs);
+            }
+        },
+        onError: error => {
+            console.warn('[DGG Tweaks] YouTube signaler stream failed.', error);
+            youtubeChatState.signalerAbort = null;
+            if (youtubeChatState.enabled && youtubeChatState.continuationMode === 'invalidation') {
+                setTimeout(startYoutubeInvalidationMode, YOUTUBE_CHAT_CONFIG.signalerReconnectDelayMs);
+            }
+        }
+    });
+
+    scheduleInvalidationTimeoutFetch();
+}
+
+async function startYoutubeInvalidationMode() {
+    if (!youtubeChatState.enabled || youtubeChatState.continuationMode !== 'invalidation') return;
+    if (youtubeChatState.signalerUnavailable || !youtubeChatState.signalerApiKey || !youtubeChatState.videoId) {
+        scheduleYoutubeChatPoll(YOUTUBE_CHAT_CONFIG.fallbackPollIntervalMs);
+        return;
+    }
+
+    try {
+        stopYoutubeSignaler();
+        await setupYoutubeSignaler();
+        startYoutubeSignalerStream();
+    } catch (error) {
+        console.warn('[DGG Tweaks] YouTube signaler setup failed; falling back to timed polling.', error);
+        youtubeChatState.signalerUnavailable = true;
+        scheduleYoutubeChatPoll(YOUTUBE_CHAT_CONFIG.fallbackPollIntervalMs);
+    }
+}
+
+function bestThumbnailUrl(thumbnails) {
+    if (!Array.isArray(thumbnails) || thumbnails.length === 0) return null;
+    return thumbnails[thumbnails.length - 1]?.url || thumbnails[0]?.url || null;
+}
+
+function hashString(value) {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+        hash = ((hash << 5) - hash) + value.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash).toString(36);
+}
+
+function youtubeEmoteToken(emoji) {
+    const name = emoji.shortcuts?.[0] || emoji.emojiId || 'youtube-emote';
+    const url = bestThumbnailUrl(emoji.image?.thumbnails);
+    if (!url) return name;
+
+    const key = hashString(`${emoji.emojiId || name}:${url}`);
+    youtubeChatState.emotes.set(key, { name, url });
+    return `[yt-emote:${key}:${name.replace(/\]/g, '')}]`;
+}
+
+function youtubeMessageText(message) {
+    const runs = message?.runs || [];
+    return runs.map(run => {
+        if (typeof run.text === 'string') return run.text;
+        if (run.emoji) return youtubeEmoteToken(run.emoji);
+        return '';
+    }).join('');
+}
+
+function youtubeTimestamp(renderer) {
+    const timestampUsec = Number(renderer.timestampUsec);
+    if (Number.isFinite(timestampUsec) && timestampUsec > 0) {
+        return new Date(Math.floor(timestampUsec / 1000)).toISOString();
+    }
+    return new Date().toISOString();
+}
+
+function extractYoutubeChatMessage(action) {
+    const item = action?.addChatItemAction?.item;
+    const renderer = item?.liveChatTextMessageRenderer || item?.liveChatPaidMessageRenderer;
+    if (!renderer) return null;
+
+    const text = youtubeMessageText(renderer.message);
+    if (!text.trim()) return null;
+
+    const authorName = renderer.authorName?.simpleText || 'youtube_user';
+    const authorId = renderer.authorExternalChannelId || authorName;
+    return {
+        id: renderer.id || `${authorId}:${renderer.timestampUsec}:${text}`,
+        authorId,
+        authorName,
+        text,
+        timestamp: youtubeTimestamp(renderer)
+    };
+}
+
+function injectYoutubeMessage(message) {
+    const nick = CHAT_BRIDGE_UTILS.sanitizeNick(message.authorName);
+    CHAT_BRIDGE_UTILS.injectDggMessage({
+        id: `youtube:${message.authorId || nick}:${message.id}`,
+        nick,
+        featureClass: YOUTUBE_CHAT_CONFIG.featureClass,
+        data: message.text,
+        timestamp: message.timestamp
+    });
+}
+
+function renderYoutubeEmoteNode(key, fallbackName) {
+    const meta = youtubeChatState.emotes.get(key);
+    if (!meta?.url) return document.createTextNode(fallbackName);
+
+    const emote = document.createElement('img');
+    emote.className = 'emote dgg-tweaks-youtube-emote';
+    emote.src = meta.url;
+    emote.alt = meta.name;
+    emote.title = meta.name;
+    emote.loading = 'lazy';
+    emote.decoding = 'async';
+    emote.addEventListener('error', () => {
+        emote.replaceWith(document.createTextNode(meta.name));
+    }, { once: true });
+    return emote;
+}
+
+function renderYoutubeEmotesInTextNode(textNode) {
+    const tokenRegex = /\[yt-emote:([^:\]]+):([^\]]+)\]/g;
+    return CHAT_BRIDGE_UTILS.replaceTextTokens(textNode, tokenRegex, match => renderYoutubeEmoteNode(match[1], match[2]));
+}
+
+function renderYoutubeEmotesInMessage(messageEl) {
+    if (!messageEl?.matches?.('.msg-chat.dgg-tweaks-youtube')) return;
+    if (messageEl.dataset.dggTweaksYoutubeEmotesRendered === 'true') return;
+
+    const textEl = messageEl.querySelector(':scope > .text');
+    if (!textEl) return;
+
+    const walker = document.createTreeWalker(textEl, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    let changed = false;
+    for (const textNode of textNodes) {
+        changed = renderYoutubeEmotesInTextNode(textNode) || changed;
+    }
+
+    if (changed) messageEl.dataset.dggTweaksYoutubeEmotesRendered = 'true';
+}
+
+let youtubeEmoteObserver = null;
+let youtubeEmoteRootObserver = null;
+
+function renderYoutubeEmotesInTree(root) {
+    if (root.matches?.('.msg-chat.dgg-tweaks-youtube')) renderYoutubeEmotesInMessage(root);
+    root.querySelectorAll?.('.msg-chat.dgg-tweaks-youtube').forEach(renderYoutubeEmotesInMessage);
+}
+
+function onYoutubeEmoteMutations(mutations) {
+    for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue;
+            renderYoutubeEmotesInTree(node);
+        }
+    }
+}
+
+function observeYoutubeEmoteLines(linesEl) {
+    youtubeEmoteRootObserver?.disconnect();
+    youtubeEmoteRootObserver = null;
+    youtubeEmoteObserver?.disconnect();
+    youtubeEmoteObserver = new MutationObserver(onYoutubeEmoteMutations);
+    youtubeEmoteObserver.observe(linesEl, { childList: true, subtree: true });
+    renderYoutubeEmotesInTree(linesEl);
+}
+
+function registerYoutubeEmoteObserver(enabled) {
+    youtubeEmoteObserver?.disconnect();
+    youtubeEmoteRootObserver?.disconnect();
+    youtubeEmoteObserver = null;
+    youtubeEmoteRootObserver = null;
+
+    if (!enabled) return;
+
+    const linesEl = UTIL.getChatLinesElement();
+    if (linesEl) {
+        observeYoutubeEmoteLines(linesEl);
+        return;
+    }
+
+    youtubeEmoteRootObserver = new MutationObserver(() => {
+        const lines = UTIL.getChatLinesElement();
+        if (lines) observeYoutubeEmoteLines(lines);
+    });
+    youtubeEmoteRootObserver.observe(document.body, { childList: true, subtree: true });
+}
+
+function updateYoutubeContinuation(liveChat) {
+    const continuationData = getContinuationData(liveChat);
+    const nextContinuation = continuationData?.data?.continuation || getNextContinuation(liveChat);
+    if (nextContinuation) youtubeChatState.continuation = nextContinuation;
+    youtubeChatState.continuationMode = continuationData?.mode || 'timed';
+    return continuationData;
+}
+
+async function fetchYoutubeChat({ primeOnly = false, timestamp = '', isTimeout = false, isFirst = true } = {}) {
+    if (!youtubeChatState.enabled || !youtubeChatState.continuation) return;
+    if (youtubeChatState.fetching) return;
+
+    youtubeChatState.fetching = true;
+
+    try {
+        const data = await CHAT_BRIDGE_UTILS.requestJson({
+            method: 'POST',
+            url: youtubeLiveChatUrl(),
+            body: youtubeRequestBody({ timestamp, isTimeout, isFirst })
+        });
+
+        const liveChat = data?.continuationContents?.liveChatContinuation;
+        const continuationData = updateYoutubeContinuation(liveChat);
+        youtubeChatState.consecutivePollFailures = 0;
+
+        for (const action of liveChat?.actions || []) {
+            const message = extractYoutubeChatMessage(action);
+            if (!message) continue;
+            if (youtubeChatState.seen.hasSeen(message.id)) continue;
+            if (!primeOnly) injectYoutubeMessage(message);
+        }
+
+        if (youtubeChatState.continuationMode === 'invalidation') {
+            clearTimeout(youtubeChatState.pollTimer);
+            youtubeChatState.pollTimer = null;
+            if (!youtubeChatState.signalerAbort) startYoutubeInvalidationMode();
+            scheduleInvalidationTimeoutFetch();
+        } else {
+            stopYoutubeSignaler();
+            scheduleYoutubeChatPoll(Number(continuationData?.data?.timeoutMs) || getNextPollInterval(liveChat));
+        }
+    } catch (error) {
+        console.warn('[DGG Tweaks] YouTube chat poll failed.', error);
+        youtubeChatState.consecutivePollFailures += 1;
+        if (youtubeChatState.consecutivePollFailures >= 3) {
+            resetYoutubeLiveChatSession();
+            scheduleYoutubeLiveRetry();
+        } else {
+            scheduleYoutubeChatPoll(YOUTUBE_CHAT_CONFIG.fallbackPollIntervalMs);
+        }
+    } finally {
+        youtubeChatState.fetching = false;
+    }
+}
+
+function scheduleYoutubeChatPoll(delay = YOUTUBE_CHAT_CONFIG.fallbackPollIntervalMs) {
+    if (!youtubeChatState.enabled || youtubeChatState.pollTimer) return;
+
+    youtubeChatState.pollTimer = setTimeout(async () => {
+        youtubeChatState.pollTimer = null;
+        if (!youtubeChatState.enabled) return;
+        await fetchYoutubeChat();
+    }, delay);
+}
+
+function scheduleYoutubeLiveRetry(delay = YOUTUBE_CHAT_CONFIG.liveRetryIntervalMs) {
+    if (!youtubeChatState.enabled || youtubeChatState.liveRetryTimer) return;
+
+    youtubeChatState.liveRetryTimer = setTimeout(() => {
+        youtubeChatState.liveRetryTimer = null;
+        if (!youtubeChatState.enabled) return;
+        startYoutubeChat({ retry: true });
+    }, delay);
+}
+
+function clearYoutubeLiveRetry() {
+    clearTimeout(youtubeChatState.liveRetryTimer);
+    youtubeChatState.liveRetryTimer = null;
+}
+
+function resetYoutubeLiveChatSession() {
+    clearTimeout(youtubeChatState.pollTimer);
+    youtubeChatState.pollTimer = null;
+    stopYoutubeSignaler();
+    youtubeChatState.fetching = false;
+    youtubeChatState.apiKey = null;
+    youtubeChatState.signalerApiKey = null;
+    youtubeChatState.context = null;
+    youtubeChatState.continuation = null;
+    youtubeChatState.videoId = null;
+    youtubeChatState.continuationMode = null;
+    youtubeChatState.gsessionId = null;
+    youtubeChatState.sid = null;
+    youtubeChatState.session = null;
+    youtubeChatState.signalerUnavailable = false;
+    youtubeChatState.consecutivePollFailures = 0;
+}
+
+async function startYoutubeChat() {
+    if (youtubeChatState.starting) return;
+    if (youtubeChatState.enabled && youtubeChatState.continuation) return;
+
+    youtubeChatState.enabled = true;
+    youtubeChatState.starting = true;
+    clearYoutubeLiveRetry();
+
+    try {
+        const liveChat = await discoverYoutubeLiveChat();
+        if (!youtubeChatState.enabled) return;
+
+        youtubeChatState.apiKey = liveChat.apiKey;
+        youtubeChatState.signalerApiKey = liveChat.signalerApiKey;
+        youtubeChatState.context = liveChat.context;
+        youtubeChatState.continuation = liveChat.continuation;
+        youtubeChatState.videoId = liveChat.videoId;
+        youtubeChatState.signalerUnavailable = false;
+
+        await fetchYoutubeChat({ primeOnly: true, isFirst: true });
+    } catch (error) {
+        resetYoutubeLiveChatSession();
+        if (youtubeChatState.enabled) {
+            console.info('[DGG Tweaks] YouTube chat is not available; retrying later.', error);
+            scheduleYoutubeLiveRetry();
+        }
+    } finally {
+        youtubeChatState.starting = false;
+    }
+}
+
+function stopYoutubeChat() {
+    youtubeChatState.enabled = false;
+    youtubeChatState.starting = false;
+    youtubeChatState.fetching = false;
+    clearYoutubeLiveRetry();
+    resetYoutubeLiveChatSession();
+}
+
+function syncYoutubeChat(enabled) {
+    if (!enabled) {
+        stopYoutubeChat();
+        return;
+    }
+
+    startYoutubeChat();
+}
+
+
 // SETTINGS
 
 const STORAGE = {
@@ -783,6 +1595,7 @@ const settingsMenuDef = [
             [INPUT_TYPES.CHECKBOX, 'rustlesearch-button', "Rustlesearch Button", "Adds a button to the bottom of chat to open your own logs"],
             [INPUT_TYPES.CHECKBOX, 'movie-button', "Movie Status Button", "Adds a movie schedule status button to the bottom of chat"],
             [INPUT_TYPES.CHECKBOX, 'kick-chat-bridge', "Kick Chat Messages", "Shows kick.com/destiny chat messages in DGG chat"],
+            [INPUT_TYPES.CHECKBOX, 'youtube-chat-bridge', "YouTube Chat Messages", "Shows YouTube chat messages from Destiny's live stream in DGG chat"],
             [INPUT_TYPES.CHECKBOX, 'collapse-combo-emotes', "Merge emote combos", "Combines broken combos and includes multi-emote spam in combos"],
             [INPUT_TYPES.NUMBER_FIELD, 'link-size', "Link Size", 'Increase the clickable area for links (no visual change)', "1.00", 1.00],
             [INPUT_TYPES.CHECKBOX, 'link-size-debug', "Visualise Link Size", "Show an outline around the clickable area (debug option)"],
@@ -812,6 +1625,7 @@ let settings = {
     'rustlesearch-button': true,
     'movie-button': false,
     'kick-chat-bridge': false,
+    'youtube-chat-bridge': false,
     'collapse-combo-emotes': false
 };
 
@@ -1900,7 +2714,9 @@ async function onSettingsChanged() {
         addRustlesearchButton();
         addMovieStatusButton();
         syncKickChat(PAGE_TYPE === PAGE_TYPES.CHAT && settings['kick-chat-bridge']);
+        syncYoutubeChat(PAGE_TYPE === PAGE_TYPES.CHAT && settings['youtube-chat-bridge']);
         registerKickEmoteObserver(settings['kick-chat-bridge']);
+        registerYoutubeEmoteObserver(settings['youtube-chat-bridge']);
         registerInfoObserver();
         registerCollapseComboObserver();
         if (document.querySelector('#chat-user-info')?.classList.contains('active')) await injectInfoResize();

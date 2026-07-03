@@ -64,6 +64,9 @@ const metadata = `// ==UserScript==
 // @connect      kick.com
 // @connect      movies.zeul.dev
 // @connect      web.kick.com
+// @connect      signaler-pa.youtube.com
+// @connect      www.youtube.com
+// @connect      youtube.com
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
@@ -80,8 +83,10 @@ globalThis.DGG_TWEAKS_CSS = ${JSON.stringify(cssBundle)};
 const sources = [
     read('lib/dgg-message-injector.js'),
     read('lib/util.js'),
+    read('lib/chat-bridge-utils.js'),
     read('lib/regex.js'),
     read('lib/kick-chat.js'),
+    read('lib/youtube-chat.js'),
     read('content.js')
 ].join('\n\n');
 
