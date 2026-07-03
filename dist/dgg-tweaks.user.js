@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         DGG Tweaks
 // @namespace    yuniDev.dgg-tweaks
-// @version      2.2.0
+// @version      2.2.1
 // @description  UI Tweaks for destiny.gg
 // @author       yuniDev
 // @license      MIT
@@ -400,6 +400,55 @@ const CHAT_BRIDGE_UTILS = (() => {
         }));
     }
 
+    function timestampMillis(value) {
+        if (value === null || value === undefined || value === '') return NaN;
+
+        const numeric = Number(value);
+        if (Number.isFinite(numeric)) {
+            if (numeric > 100000000000000) return Math.floor(numeric / 1000);
+            if (numeric < 10000000000) return numeric * 1000;
+            return numeric;
+        }
+
+        const parsed = new Date(value).getTime();
+        return Number.isFinite(parsed) ? parsed : NaN;
+    }
+
+    function scheduleMessageFrame(messages, { getTimestamp, deliver, isEnabled = () => true, timers = null } = {}) {
+        if (!Array.isArray(messages) || messages.length === 0) return;
+        if (typeof getTimestamp !== 'function' || typeof deliver !== 'function') return;
+
+        const frameStart = timestampMillis(getTimestamp(messages[0]));
+
+        messages.forEach(message => {
+            const messageTime = timestampMillis(getTimestamp(message));
+            const delay = Number.isFinite(frameStart) && Number.isFinite(messageTime)
+                ? Math.max(0, messageTime - frameStart)
+                : 0;
+
+            if (delay === 0) {
+                if (isEnabled()) deliver(message);
+                return;
+            }
+
+            const timer = setTimeout(() => {
+                if (timers) {
+                    const index = timers.indexOf(timer);
+                    if (index !== -1) timers.splice(index, 1);
+                }
+                if (isEnabled()) deliver(message);
+            }, delay);
+
+            timers?.push?.(timer);
+        });
+    }
+
+    function clearTimers(timers) {
+        if (!Array.isArray(timers)) return;
+        timers.forEach(timer => clearTimeout(timer));
+        timers.length = 0;
+    }
+
     function replaceTextTokens(textNode, tokenRegex, renderMatch) {
         const text = textNode.textContent;
         if (!tokenRegex.test(text)) return false;
@@ -428,10 +477,12 @@ const CHAT_BRIDGE_UTILS = (() => {
 
     return {
         createSeenTracker,
+        clearTimers,
         injectDggMessage,
         replaceTextTokens,
         requestJson,
         requestText,
+        scheduleMessageFrame,
         sanitizeNick
     };
 })();
@@ -671,7 +722,7 @@ const KICK_CHAT_CONFIG = {
     fallbackChannelId: 1772249,
     channelSlug: 'destiny',
     featureClass: 'dgg-tweaks-kick',
-    maxSeenMessages: 1000,
+    maxSeenMessages: 200,
     pollIntervalMs: 2500
 };
 
@@ -679,6 +730,7 @@ const kickChatState = {
     enabled: false,
     starting: false,
     pollTimer: null,
+    frameTimers: [],
     seen: CHAT_BRIDGE_UTILS.createSeenTracker(KICK_CHAT_CONFIG.maxSeenMessages),
     channelId: null
 };
@@ -831,18 +883,30 @@ function sortKickMessages(messages) {
     });
 }
 
+function scheduleKickMessageFrame(messages) {
+    CHAT_BRIDGE_UTILS.scheduleMessageFrame(messages, {
+        getTimestamp: message => message.created_at,
+        deliver: injectSyntheticDggMessage,
+        isEnabled: () => kickChatState.enabled,
+        timers: kickChatState.frameTimers
+    });
+}
+
 async function pollKickChatHistory({ primeOnly = false } = {}) {
     if (!kickChatState.enabled || !kickChatState.channelId) return;
 
     try {
         const data = await CHAT_BRIDGE_UTILS.requestJson({ url: `https://web.kick.com/api/v1/chat/${kickChatState.channelId}/history` });
         const messages = sortKickMessages(extractKickHistoryMessages(data));
+        const newMessages = [];
 
         for (const message of messages) {
             if (message?.type !== 'message') continue;
             if (kickChatState.seen.hasSeen(message.id)) continue;
-            if (!primeOnly) injectSyntheticDggMessage(message);
+            if (!primeOnly) newMessages.push(message);
         }
+
+        scheduleKickMessageFrame(newMessages);
     } catch (error) {
         console.warn('[DGG Tweaks] Kick history poll failed.', error);
     }
@@ -886,6 +950,7 @@ function stopKickChat() {
     kickChatState.starting = false;
     clearTimeout(kickChatState.pollTimer);
     kickChatState.pollTimer = null;
+    CHAT_BRIDGE_UTILS.clearTimers(kickChatState.frameTimers);
 }
 
 function syncKickChat(enabled) {
@@ -901,8 +966,8 @@ function syncKickChat(enabled) {
 const YOUTUBE_CHAT_CONFIG = {
     liveUrl: 'https://www.youtube.com/@Destiny/live',
     featureClass: 'dgg-tweaks-youtube',
-    maxSeenMessages: 1000,
-    pollIntervalMs: 2000,
+    maxSeenMessages: 1,
+    pollIntervalMs: 2500,
     fallbackPollIntervalMs: 3000,
     liveRetryIntervalMs: 60000
 };
@@ -913,6 +978,7 @@ const youtubeChatState = {
     fetching: false,
     pollTimer: null,
     liveRetryTimer: null,
+    frameTimers: [],
     seen: CHAT_BRIDGE_UTILS.createSeenTracker(YOUTUBE_CHAT_CONFIG.maxSeenMessages),
     apiKey: null,
     context: null,
@@ -1127,6 +1193,15 @@ function injectYoutubeMessage(message) {
     });
 }
 
+function scheduleYoutubeMessageFrame(messages) {
+    CHAT_BRIDGE_UTILS.scheduleMessageFrame(messages, {
+        getTimestamp: message => message.timestamp,
+        deliver: injectYoutubeMessage,
+        isEnabled: () => youtubeChatState.enabled,
+        timers: youtubeChatState.frameTimers
+    });
+}
+
 function renderYoutubeEmoteNode(key, fallbackName) {
     const meta = youtubeChatState.emotes.get(key);
     if (!meta?.url) return document.createTextNode(fallbackName);
@@ -1239,14 +1314,16 @@ async function fetchYoutubeChat({ primeOnly = false, timestamp = '', isTimeout =
         const liveChat = data?.continuationContents?.liveChatContinuation;
         updateYoutubeContinuation(liveChat);
         youtubeChatState.consecutivePollFailures = 0;
+        const newMessages = [];
 
         for (const action of liveChat?.actions || []) {
             const message = extractYoutubeChatMessage(action);
             if (!message) continue;
             if (youtubeChatState.seen.hasSeen(message.id)) continue;
-            if (!primeOnly) injectYoutubeMessage(message);
+            if (!primeOnly) newMessages.push(message);
         }
 
+        scheduleYoutubeMessageFrame(newMessages);
         scheduleYoutubeChatPoll(YOUTUBE_CHAT_CONFIG.pollIntervalMs);
     } catch (error) {
         console.warn('[DGG Tweaks] YouTube chat poll failed.', error);
@@ -1299,6 +1376,7 @@ function resetYoutubeLiveChatSession() {
     youtubeChatState.continuation = null;
     youtubeChatState.continuationMode = null;
     youtubeChatState.consecutivePollFailures = 0;
+    CHAT_BRIDGE_UTILS.clearTimers(youtubeChatState.frameTimers);
 }
 
 async function startYoutubeChat() {
