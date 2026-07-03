@@ -64,7 +64,6 @@ const metadata = `// ==UserScript==
 // @connect      kick.com
 // @connect      movies.zeul.dev
 // @connect      web.kick.com
-// @connect      signaler-pa.youtube.com
 // @connect      www.youtube.com
 // @connect      youtube.com
 // @grant        GM_getValue
